@@ -1,6 +1,5 @@
 @CHARSET "UTF-8";
 
-/* Some CSS styling */
 #sketchpadapp {
     /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
     -webkit-touch-callout: none;
@@ -24,7 +23,16 @@
 }
 #sketchpad {
     float:left;
+    height:300px;
+    width:400px;
     border:2px solid #888;
     border-radius:4px;
     position:relative; /* Necessary for correct mouse co-ords in Firefox */
+}
+#clearbutton {
+    font-size: 15px;
+    padding: 10px;
+    -webkit-appearance: none;
+    background: #eee;
+    border: 1px solid #888;
 }
