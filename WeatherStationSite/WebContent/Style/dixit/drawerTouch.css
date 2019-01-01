@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 
-#sketchpadapp {
+#sketcher {
     /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
     -webkit-touch-callout: none;
     -webkit-user-select: none;
@@ -11,21 +11,35 @@
 }
 .leftside {
     float:left;
-    width:220px;
-    height:285px;
-    background-color:#def;
-    padding:10px;
-    border-radius:4px;
 }
 .rightside {
     float:left;
     margin-left:10px;
+    width:220px;
+    height:285px;
+    background-color:#CE8C7D;
+    padding:10px;
+    border-radius:4px;
+}
+.colorTable {
+	background-color: 	red;
+	padding: 			0px;
+	border-spacing: 	10px;
+	margin-left:		auto; 
+    margin-right:		auto;
+}
+.colorBlock {
+	width: 				50px;
+	height: 			80px;
+	background-color: 	#7DBFCE;
+	border-radius: 		4px;
+	border:				1px solid 
 }
 #sketchpad {
     float:left;
-    height:300px;
-    width:400px;
-    border:2px solid #888;
+    height:600px;
+    width:450px;
+    border:2px solid darkred;
     border-radius:4px;
     position:relative; /* Necessary for correct mouse co-ords in Firefox */
 }
