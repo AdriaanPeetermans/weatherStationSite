@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Drawer Touch</title>
+		<script src="../../../Scripts/nl/dixit/drawerTouch.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="../../../Style/dixit/drawerTouch.css">
+	</head>
+	<body onload="init()">
+		<div id="sketchpadapp">
+        <div class="leftside">
+             Simple mouse-based HTML5 canvas sketchpad.<br/><br/>
+             Draw something by holding down the mouse button or using single clicks.<br/><br/>
+             On a touchscreen, tapping the area will register as a single mouse click.<br/><br/>
+
+             <input type="submit" value="Clear Sketchpad" onclick="clearCanvas(canvas,ctx);">
+        </div>
+        <div class="rightside">
+            <canvas id="sketchpad" height="300" width="400">
+            </canvas>
+        </div>
+    </div>
+	</body>
+</html>
