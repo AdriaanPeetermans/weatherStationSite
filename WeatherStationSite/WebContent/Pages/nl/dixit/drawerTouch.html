@@ -13,21 +13,14 @@
 	            </canvas>
 	        </div>
 	        <div class="rightside">
-	        	Colors:
-	        	<table class="colorTable">
-	        		<tr>
-	        			<td>
-	        				<div id="colorOne" class="colorBlock"></div>
-	        			</td>
-	        			<td>
-	        				<div id="colorTwo" class="colorBlock"></div>
-	        			</td>
-	        		</tr>
-	        	</table>
-	             Touchscreen and mouse support HTML5 canvas sketchpad.<br/><br/>
-	             Draw something by tapping or dragging.<br/><br/>
-	             Works on iOS, Android and desktop/laptop touchscreens using Chrome/Firefox/Safari.<br/><br/>
-	             <input type="submit" value="Clear Sketchpad" id="clearbutton" onclick="clearCanvas(canvas,ctx);">
+	        	<div class="colorBlock1"></div>
+	        	<div class="colorBlock2"></div>
+	        	<div class="slidecontainer">
+  					<input type="range" min="1" max="7" value="4" class="slider" id="thicknessSlider">
+				</div>
+				<div class="readyBlock">
+					<input type="submit" value="Klaar!" id="readyButton" onclick="ready(canvas,ctx);">
+				</div>
 	        </div>
     	</div>
 	</body>
