@@ -1,129 +1,253 @@
+window.onerror = function(msg, url, line) {
+	var urlstr = "<a href = " + url + ">" + url + "</a>";
+	var str = "";
+	str = str + "ERROR".fontcolor("red") + "<br>";
+	str = str + msg + "<br>";
+	str = str + "in : ".fontcolor("red") + urlstr + " line : ".fontcolor("red") + line;
+	document.write(str);
+}
+
 // Variables for referencing the canvas and 2dcanvas context
-    var canvas,ctx;
+var canvas,ctx;
 
-    // Variables to keep track of the mouse position and left-button status 
-    var mouseX,mouseY,mouseDown=0;
+// Variables to keep track of the mouse position and left-button status 
+var mouseX,mouseY,mouseDown=0,mousePrevX=-1,mousePrevY=-1;
 
-    // Variables to keep track of the touch position
-    var touchX,touchY;
+// Variables to keep track of the touch position
+var touchX,touchY,touxhPrevX=-1,touchPrevY=-1;
 
-    // Draws a dot at a specific position on the supplied canvas name
-    // Parameters are: A canvas context, the x position, the y position, the size of the dot
-    function drawDot(ctx,x,y,size) {
-        // Let's use black by setting RGB values to 0, and 255 alpha (completely opaque)
-        r=0; g=0; b=0; a=255;
+// Draws a dot at a specific position on the supplied canvas name
+// Parameters are: A canvas context, the x position, the y position, the size of the dot
+function drawLine(ctx,x,y, prevx, prevy) {
+	//ctx.globalAlpha = 0.7;
+	ctx.fillStyle = color;
+	ctx.beginPath();
+	if ((prevx >=0) && (prevy > 0)) {
+		ctx.strokeStyle = color;
+		ctx.lineWidth = 2*size;
+		ctx.lineCap = "round";
+		ctx.moveTo(prevx,prevy);
+		ctx.lineTo(x,y);
+		ctx.stroke();
+	}
+	else {
+	    ctx.arc(x, y, size, 0, Math.PI*2, true); 
+	    ctx.closePath();
+	    ctx.fill();
+	}
+} 
 
-        // Select a fill style
-        ctx.fillStyle = "rgba("+r+","+g+","+b+","+(a/255)+")";
+// Clear the canvas context using the canvas width and height
+function clearCanvas(canvas,ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
 
-        // Draw a filled circle
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI*2, true); 
-        ctx.closePath();
-        ctx.fill();
-    } 
+// Keep track of the mouse button being pressed and draw a dot at current location
+function sketchpad_mouseDown() {
+    mouseDown=1;
+    drawLine(ctx, mouseX, mouseY, mousePrevX, mousePrevY);
+    mousePrevX = mouseX;
+    mousePrevY = mouseY;
+}
 
-    // Clear the canvas context using the canvas width and height
-    function clearCanvas(canvas,ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+// Keep track of the mouse button being released
+function sketchpad_mouseUp() {
+    mouseDown=0;
+    mousePrevX = -1;
+    mousePrevY = -1;
+}
+
+// Keep track of the mouse position and draw a dot if mouse button is currently pressed
+function sketchpad_mouseMove(e) { 
+    // Update the mouse co-ordinates when moved
+    getMousePos(e);
+
+    // Draw a dot if the mouse button is currently being pressed
+    if (mouseDown==1) {
+        drawLine(ctx, mouseX, mouseY, mousePrevX, mousePrevY);
+        mousePrevX = mouseX;
+        mousePrevY = mouseY;
     }
+}
 
-    // Keep track of the mouse button being pressed and draw a dot at current location
-    function sketchpad_mouseDown() {
-        mouseDown=1;
-        drawDot(ctx,mouseX,mouseY,12);
+// Get the current mouse position relative to the top-left of the canvas
+function getMousePos(e) {
+    if (!e)
+        var e = event;
+
+    if (e.offsetX) {
+        mouseX = e.offsetX;
+        mouseY = e.offsetY;
     }
-
-    // Keep track of the mouse button being released
-    function sketchpad_mouseUp() {
-        mouseDown=0;
+    else if (e.layerX) {
+        mouseX = e.layerX;
+        mouseY = e.layerY;
     }
+ }
 
-    // Keep track of the mouse position and draw a dot if mouse button is currently pressed
-    function sketchpad_mouseMove(e) { 
-        // Update the mouse co-ordinates when moved
-        getMousePos(e);
+// Draw something when a touch start is detected
+function sketchpad_touchStart() {
+    // Update the touch co-ordinates
+    getTouchPos();
 
-        // Draw a dot if the mouse button is currently being pressed
-        if (mouseDown==1) {
-            drawDot(ctx,mouseX,mouseY,12);
+    drawLine(ctx,touchX,touchY,touchPrevX,touchPrevY);
+    touchPrevX = touchX;
+    touchPrevY = touchY;
+
+    // Prevents an additional mousedown event being triggered
+    event.preventDefault();
+}
+
+// Draw something and prevent the default scrolling when touch movement is detected
+function sketchpad_touchMove(e) { 
+    // Update the touch co-ordinates
+    getTouchPos(e);
+
+    // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
+    drawLine(ctx,touchX,touchY,touchPrevX,touchPrevY); 
+    touchPrevX = touchX;
+    touchPrevY = touchY;
+
+    // Prevent a scrolling action as a result of this touchmove triggering.
+    event.preventDefault();
+}
+
+function sketchpad_touchEnd() {
+	touchPrevX = -1;
+	touchPrevY = -1;
+}
+
+// Get the touch position relative to the top-left of the canvas
+// When we get the raw values of pageX and pageY below, they take into account the scrolling on the page
+// but not the position relative to our target div. We'll adjust them using "target.offsetLeft" and
+// "target.offsetTop" to get the correct values in relation to the top left of the canvas.
+function getTouchPos(e) {
+    if (!e)
+        var e = event;
+
+    if(e.touches) {
+        if (e.touches.length == 1) { // Only deal with one finger
+            var touch = e.touches[0]; // Get the information for finger #1
+            touchX=touch.pageX-touch.target.offsetLeft;
+            touchY=touch.pageY-touch.target.offsetTop;
         }
     }
+}
 
-    // Get the current mouse position relative to the top-left of the canvas
-    function getMousePos(e) {
-        if (!e)
-            var e = event;
 
-        if (e.offsetX) {
-            mouseX = e.offsetX;
-            mouseY = e.offsetY;
-        }
-        else if (e.layerX) {
-            mouseX = e.layerX;
-            mouseY = e.layerY;
-        }
-     }
+// Set-up the canvas and add our event handlers after the page has loaded
+function init() {
+    // Get the specific canvas element from the HTML document
+    canvas = document.getElementById('sketchpad');
 
-    // Draw something when a touch start is detected
-    function sketchpad_touchStart() {
-        // Update the touch co-ordinates
-        getTouchPos();
+    // If the browser supports the canvas tag, get the 2d drawing context for this canvas
+    if (canvas.getContext)
+        ctx = canvas.getContext('2d');
 
-        drawDot(ctx,touchX,touchY,12);
+    // Check that we have a valid context to draw on/with before adding event handlers
+    if (ctx) {
+        // React to mouse events on the canvas, and mouseup on the entire document
+        canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
+        canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
+        window.addEventListener('mouseup', sketchpad_mouseUp, false);
 
-        // Prevents an additional mousedown event being triggered
-        event.preventDefault();
+        // React to touch events on the canvas
+        canvas.addEventListener('touchstart', sketchpad_touchStart, false);
+        canvas.addEventListener('touchmove', sketchpad_touchMove, false);
+        canvas.addEventListener('touchend', sketchpad_touchEnd, false);
     }
+    
+    //drawShowerDot:
+    drawDotShower();
+    
+    //Init timer:
+    window.setInterval(timer, 1000);
+}
 
-    // Draw something and prevent the default scrolling when touch movement is detected
-    function sketchpad_touchMove(e) { 
-        // Update the touch co-ordinates
-        getTouchPos(e);
+var color1 = "#80A0D9";
 
-        // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        drawDot(ctx,touchX,touchY,12); 
+var color2 = "#D9B980";
 
-        // Prevent a scrolling action as a result of this touchmove triggering.
-        event.preventDefault();
-    }
+var color = color1;
 
-    // Get the touch position relative to the top-left of the canvas
-    // When we get the raw values of pageX and pageY below, they take into account the scrolling on the page
-    // but not the position relative to our target div. We'll adjust them using "target.offsetLeft" and
-    // "target.offsetTop" to get the correct values in relation to the top left of the canvas.
-    function getTouchPos(e) {
-        if (!e)
-            var e = event;
+var size = 15;
 
-        if(e.touches) {
-            if (e.touches.length == 1) { // Only deal with one finger
-                var touch = e.touches[0]; // Get the information for finger #1
-                touchX=touch.pageX-touch.target.offsetLeft;
-                touchY=touch.pageY-touch.target.offsetTop;
-            }
-        }
-    }
+var maxSize = 30;
 
+var minSize = 5;
 
-    // Set-up the canvas and add our event handlers after the page has loaded
-    function init() {
-        // Get the specific canvas element from the HTML document
-        canvas = document.getElementById('sketchpad');
+var startTime = 120;	//Seconds
 
-        // If the browser supports the canvas tag, get the 2d drawing context for this canvas
-        if (canvas.getContext)
-            ctx = canvas.getContext('2d');
+var nowTime = startTime;
 
-        // Check that we have a valid context to draw on/with before adding event handlers
-        if (ctx) {
-            // React to mouse events on the canvas, and mouseup on the entire document
-            canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
-            canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
-            window.addEventListener('mouseup', sketchpad_mouseUp, false);
+function drawDotShower() {
+	var showerCanvas = document.getElementById("sizeShowerCanvas");
+    var showerCtx = showerCanvas.getContext('2d');
+    showerCtx.clearRect(0, 0, 65, 65);
+    showerCtx.fillStyle = color;
+    showerCtx.beginPath();
+    showerCtx.arc(32.5, 32.5, size, 0, Math.PI*2, true); 
+    showerCtx.closePath();
+    showerCtx.fill();
+}
 
-            // React to touch events on the canvas
-            canvas.addEventListener('touchstart', sketchpad_touchStart, false);
-            canvas.addEventListener('touchmove', sketchpad_touchMove, false);
-        }
-    }
+function changeSize(el) {
+	size = (el.value-1)/98*(maxSize-minSize)+minSize;
+	drawDotShower();
+}
+
+function ready(anvas,ctx) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
+function changeColor(col) {
+	if (col == 1) {
+		color = color1;
+	}
+	else {
+		color = color2;
+	}
+	drawDotShower();
+}
+
+//timing:
+function timer() {
+	var sec = nowTime%60;
+	var min = Math.round((nowTime-sec)/60);
+	var timeHolder = document.getElementById("timeHolder");
+	timeHolder.innerHTML = stringLength(min,2) + ":" + stringLength(sec, 2);
+	var loadCan = document.getElementById("loadCan");
+	var loadCtx = loadCan.getContext('2d');
+	var width = (startTime-nowTime)*1.0/startTime*loadCan.width;
+	loadCtx.fillStyle = "#D98880";
+	loadCtx.fillRect(0, 0, width, loadCan.height);
+	nowTime = nowTime - 1;
+}
+
+function stringLength(number, length) {
+	var result = "" + number;
+	var l = result.length;
+	if (l < length) {
+		for (var i = 0; i < length-l; i++) {
+			result = "0" + result;
+		}
+	}
+	else {
+		if (l > length) {
+			result = result.substring(l-length, l);
+		}
+	}
+	return result;
+}
+    
+//Styling:
+	//Ready button:
+function readyMouseIn() {
+	var readyBut = document.getElementById("readyButton");
+	readyBut.style.color = "darkred";
+}
+
+function readyMouseOut() {
+	var readyBut = document.getElementById("readyButton");
+	readyBut.style.color = "#2C3E50";
+}

@@ -9,17 +9,39 @@
 	<body onload="init()">
 		<div id="sketcher">
 	        <div class="leftside">
-	            <canvas id="sketchpad" height="600" width="450">
-	            </canvas>
+	        	<canvas id="loadCan" width="450px" height="50px"></canvas>
+	        	<div class="wordBlock">
+	        		<div class="wordHolder">
+	        			Hier komt het woord
+	        		</div>
+	        	</div>
+	            <canvas id="sketchpad" height="550px" width="450px"></canvas>
+	            <div class="bottomBlock">
+	            	<div class="nameBlock">
+	            		<div class="nameHolder">
+	            			Adriaan
+            			</div>
+	            	</div>
+	            	<div class="timeBlock">
+	            		<div class="timeHolder" id="timeHolder">
+	            			02:00
+            			</div>
+	            	</div>
+	            </div>
 	        </div>
 	        <div class="rightside">
-	        	<div class="colorBlock1"></div>
-	        	<div class="colorBlock2"></div>
+	        	<div class="colorBlock1" onclick = "changeColor(1);"></div>
+	        	<div class="colorBlock2" onclick = "changeColor(2);"></div>
 	        	<div class="slidecontainer">
-  					<input type="range" min="1" max="7" value="4" class="slider" id="thicknessSlider">
+  					<input type="range" min="1" max="99" value="50" class="slider" id="thicknessSlider" OnInput="changeSize(this);">
 				</div>
-				<div class="readyBlock">
-					<input type="submit" value="Klaar!" id="readyButton" onclick="ready(canvas,ctx);">
+				<div class="sizeShowerBlock">
+					<canvas id="sizeShowerCanvas" height="65px" width="65px"></canvas>
+				</div>
+				<div class="readyBlock" onmouseover="readyMouseIn();" onmouseout="readyMouseOut();" onclick="ready(canvas,ctx);">
+					<div id="readyButton">
+						Klaar!
+					</div>
 				</div>
 	        </div>
     	</div>
