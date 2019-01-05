@@ -1,0 +1,119 @@
+@CHARSET "UTF-8";
+
+html, body {
+	margin: 0;
+	padding: 0;
+	border: none;
+	height: 100%;
+}
+
+.mainBlock {
+	position: relative;
+	width: 100%;
+	height: 100%;
+}
+
+.mainHolder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 500px;
+	height: 400px;
+	text-align: center;
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+}
+
+.pwebContainer {
+	width: 20%;
+	height: 70px;
+	position: relative;
+}
+
+.pwebBlock {
+	height: 55px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+
+.titleBlock {
+	width: 100%;
+	height: 50px;
+	text-align: center;
+	display: table;
+}
+
+.titleHolder {
+	display: table-cell;
+	vertical-align: middle;
+	background-color: #C1D980;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	font-family: arial;
+	font-size: 30px;
+	color: #2C3E50;
+}
+
+.titleImageBlock {
+	width: 100%;
+	height: 300px;
+	text-align: center;
+	display: table;
+}
+
+.titleImageHolder {
+	display: table-cell;
+	vertical-align: middle;
+	background-color: white;
+}
+
+.buttonBlock {
+	width: 100%;
+	height: 50px;
+}
+
+.leftButtonBlock {
+	width: 50%;
+	height: 50px;
+	text-align: center;
+	display: table;
+	float: left;
+}
+
+.rightButtonBlock {
+	width: 50%;
+	height: 50px;
+	text-align: center;
+	display: table;
+	float: left;
+	background-color: #C1D980;
+	border-bottom-right-radius: 6px;
+}
+
+.leftButtonHolder {
+	display: table-cell;
+	vertical-align: middle;
+	background-color: #C1D980;
+	border-bottom-left-radius: 6px;
+	font-family: arial;
+	font-size: 30px;
+	color: #2C3E50;
+	cursor: pointer;
+}
+
+.rightButtonHolder {
+	display: table-cell;
+	vertical-align: middle;
+	background-color: #9880D9;
+	border-bottom-right-radius: 6px;
+	border-bottom-left-radius: 25px;
+	border-top-left-radius: 25px;
+	font-family: arial;
+	font-size: 30px;
+	color: #2C3E50;
+}

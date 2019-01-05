@@ -16,7 +16,7 @@
 }
 .rightside {
     float:				left;
-    margin-left:		10px;
+    margin-left:		20px;
     width:				220px;
     padding:			0px;
     border-radius:		6px;
@@ -84,6 +84,7 @@
     float:left;
     height: 550px;
     width:450px;
+    margin-top: 50px;
 /*     border:2px solid darkred; */
 /*     border-radius:4px; */
     position:relative; /* Necessary for correct mouse co-ords in Firefox */
@@ -189,4 +190,38 @@
 	vertical-align: middle;
 	border-bottom-right-radius: 6px;
 	background: #EBEDEF;
+}
+
+.rightrightside {
+	float:left;
+    border-radius:		6px;
+    margin-left:		20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.rightTopBlock {
+	width: 100%;
+	height: 50px;
+	background-color: #EBEDEF;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
+	font-family: arial;
+	font-size: 30px;
+	color: #2C3E50;
+}
+
+.rightBottomBlock {
+	width: 100%;
+	height: 50px;
+	background-color: #EBEDEF;
+	border-bottom-left-radius: 6px;
+	border-bottom-right-radius: 6px;
+	font-family: arial;
+	font-size: 30px;
+	color: #2C3E50;
+}
+
+#redrawCan {
+	height: 550px;
+    width:450px;
 }

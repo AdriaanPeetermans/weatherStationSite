@@ -16,13 +16,108 @@ var mouseX,mouseY,mouseDown=0,mousePrevX=-1,mousePrevY=-1;
 // Variables to keep track of the touch position
 var touchX,touchY,touxhPrevX=-1,touchPrevY=-1;
 
+// Variable array to hold x and y coordinates of drawing
+var drawingXY = [];
+var currentSegmentXY = [];
+
+// Variables defining the drawing speed.
+var redrawPps = 40;		//Points/second
+var segmentDelay = 200;	//Delay in milliseconds between two segments
+
+var drawingIndex = 0;
+var redrawCan;
+var redrawCtx;
+var nbDrawings = 0;
+var redrawSegment = 0;
+var redrawPoint = 1;
+var redrawInterval;
+var redrawDelay = 1000/redrawPps;
+var segmentWaitCntMax = segmentDelay/redrawDelay;
+var segmentWaitCnt = 0;
+
+function redrawPoints() {
+	if (drawingIndex < nbDrawings) {
+		if (segmentWaitCnt != 0) {
+			segmentWaitCnt --;
+			return;
+		}
+		var segment = drawingXY[redrawSegment];
+		var segmentColor = segment[0].color;
+		var segmentSize = segment[0].size;
+		redrawCtx.fillStyle = segmentColor;
+		redrawCtx.beginPath();
+		if (segment.length == 1) {
+			redrawCtx.arc(segment[0].x, segment[0].y, segmentSize, 0, Math.PI*2, true);
+			redrawCtx.closePath();
+			redrawCtx.fill();
+		}
+		else {
+			redrawCtx.strokeStyle = segmentColor;
+			redrawCtx.lineWidth = 2*segmentSize;
+			redrawCtx.lineCap = "round";
+			redrawCtx.moveTo(segment[redrawPoint-1].x,segment[redrawPoint-1].y);
+			redrawCtx.lineTo(segment[redrawPoint].x,segment[redrawPoint].y);
+			redrawCtx.stroke();
+		}
+		if (redrawPoint >= segment.length-1) {
+			redrawSegment ++;
+			redrawPoint = 1;
+			segmentWaitCnt = segmentWaitCntMax-1;
+		}
+		else {
+			redrawPoint ++;
+		}
+		drawingIndex ++;
+	}
+	else {
+		window.clearInterval(redrawInterval);
+	}
+}
+
+function redraw() {
+	nbDrawings = 0;
+	for (var i = 0; i < drawingXY.length; i++) {
+		if (drawingXY[i].length == 1) {
+			nbDrawings = nbDrawings + 1;
+		}
+		else {
+			nbDrawings = nbDrawings + drawingXY[i].length - 1;
+		}
+	}
+	redrawInterval = window.setInterval(redrawPoints, redrawDelay);
+	
+//	for (var i = 0; i < drawingXY.length; i++) {
+//		var segment = drawingXY[i];
+//		var segmentColor = segment[0].color;
+//		var segmentSize = segment[0].size;
+//		ctx.fillStyle = segmentColor;
+//		ctx.beginPath();
+//		if (segment.length == 1) {
+//			ctx.arc(segment[0].x, segment[0].y, segmentSize, 0, Math.PI*2, true);
+//			ctx.closePath();
+//			ctx.fill();
+//			
+//		}
+//		else {
+//			for (j = 1; j < segment.length; j++) {
+//				ctx.strokeStyle = segmentColor;
+//				ctx.lineWidth = 2*segmentSize;
+//				ctx.lineCap = "round";
+//				ctx.moveTo(segment[j-1].x,segment[j-1].y);
+//				ctx.lineTo(segment[j].x,segment[j].y);
+//				ctx.stroke();
+//			}
+//		}
+//	}
+}
+
 // Draws a dot at a specific position on the supplied canvas name
 // Parameters are: A canvas context, the x position, the y position, the size of the dot
 function drawLine(ctx,x,y, prevx, prevy) {
 	//ctx.globalAlpha = 0.7;
 	ctx.fillStyle = color;
 	ctx.beginPath();
-	if ((prevx >=0) && (prevy > 0)) {
+	if ((prevx > 0) && (prevy > 0)) {
 		ctx.strokeStyle = color;
 		ctx.lineWidth = 2*size;
 		ctx.lineCap = "round";
@@ -35,6 +130,8 @@ function drawLine(ctx,x,y, prevx, prevy) {
 	    ctx.closePath();
 	    ctx.fill();
 	}
+	var point = {x: x, y: y, color: color, size: size};
+	currentSegmentXY.push(point);
 } 
 
 // Clear the canvas context using the canvas width and height
@@ -55,6 +152,10 @@ function sketchpad_mouseUp() {
     mouseDown=0;
     mousePrevX = -1;
     mousePrevY = -1;
+    if (currentSegmentXY.length > 0) {
+    	drawingXY.push(currentSegmentXY);
+    	currentSegmentXY = [];
+    }
 }
 
 // Keep track of the mouse position and draw a dot if mouse button is currently pressed
@@ -115,6 +216,10 @@ function sketchpad_touchMove(e) {
 function sketchpad_touchEnd() {
 	touchPrevX = -1;
 	touchPrevY = -1;
+	if (currentSegmentXY.length > 0) {
+    	drawingXY.push(currentSegmentXY);
+    	currentSegmentXY = [];
+    }
 }
 
 // Get the touch position relative to the top-left of the canvas
@@ -157,6 +262,10 @@ function init() {
         canvas.addEventListener('touchend', sketchpad_touchEnd, false);
     }
     
+    //Redrawer:
+    redrawCan = document.getElementById("redrawCan");
+    redrawCtx = redrawCan.getContext('2d');
+    
     //drawShowerDot:
     drawDotShower();
     
@@ -164,9 +273,11 @@ function init() {
     window.setInterval(timer, 1000);
 }
 
-var color1 = "#80A0D9";
+//var color1 = "#80A0D9";
+var color1 = "#80D9D1";
 
-var color2 = "#D9B980";
+//var color2 = "#D9B980";
+var color2 = "#D98088";
 
 var color = color1;
 
@@ -198,6 +309,7 @@ function changeSize(el) {
 
 function ready(anvas,ctx) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    redraw();
 }
 
 function changeColor(col) {
