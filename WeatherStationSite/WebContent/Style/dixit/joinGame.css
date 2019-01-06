@@ -59,16 +59,44 @@ html, body {
 	color: #2C3E50;
 }
 
+.checkerBlock {
+	width: 100%;
+	height: 150px;
+/* 	text-align: center; */
+/* 	display: table; */
+	position: relative;
+}
+
+.checkerHolder {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -15%);
+	width: 80%;
+}
+
+#checkerCan {
+	width: 300px;
+	height: 50px;
+	float: left;
+	background-color: #D980A7;
+	border-radius: 25px;
+	border: 2px solid #EBEDEF;
+}
+
 .titleImageBlock {
 	width: 100%;
-	height: 300px;
-	text-align: center;
-	display: table;
+	height: 150px;
+	position: relative;
 }
 
 .titleImageHolder {
-	display: table-cell;
-	vertical-align: middle;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -85%);
+/* 	display: table-cell; */
+/* 	vertical-align: middle; */
 	background-color: white;
 }
 
@@ -116,78 +144,17 @@ html, body {
 	font-family: arial;
 	font-size: 30px;
 	color: #2C3E50;
+	cursor: pointer;
 }
 
-.player {
-	width: 150px;
-	height: 220px;
-	position: absolute;
-	transform: translate(-50%, -50%);
-	text-align: center;
-	z-index: 2;
-	border-radius: 20px;
-	border: 2px dashed #2C3E50;
-}
-
-.faintIm {
-	position: relative;
-	top: 47px;
-	left: 0px;
-}
-
-.playerNameBlock {
-	width: 100%;
-	height: 36px;
-	text-align: center;
-	display: table;
-	border-top-left-radius: 6px;
-	border-top-right-radius: 6px;
-}
-
-.playerNameHolder {
-	display: table-cell;
-	vertical-align: middle;
+#codeInput {
+	width: 250px;
+	height: 60px;
 	font-family: arial;
-	font-size: 25px;
+	font-size: 50px;
 	color: #2C3E50;
-}
-
-#player0 {
-	top: 20%;
-	left: 7%;
-}
-
-#player1 {
-	top: 35%;
-	left: 22%;
-}
-
-#player2 {
-	top: 60%;
-	left: 7%;
-}
-
-#player3 {
-	top: 75%;
-	left: 22%;
-}
-
-#player4 {
-	top: 35%;
-	left: 93%;
-}
-
-#player5 {
-	top: 20%;
-	left: 78%;
-}
-
-#player6 {
-	top: 75%;
-	left: 93%;
-}
-
-#player7 {
-	top: 60%;
-	left: 78%;
+	text-align: center;
+	outline-width:0px;
+	border-radius: 6px;
+	border: 7px solid #EBEDEF;
 }

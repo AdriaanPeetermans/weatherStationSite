@@ -18,3 +18,15 @@ function init() {
 function newGame() {
 	window.open("newGame.html", "_self");
 }
+
+function join() {
+	window.open("joinGame.html", "_self");
+}
+
+function mouseIn(el) {
+	el.style.color = "#EBEDEF";
+}
+
+function mouseOut(el) {
+	el.style.color = "#2C3E50";
+}

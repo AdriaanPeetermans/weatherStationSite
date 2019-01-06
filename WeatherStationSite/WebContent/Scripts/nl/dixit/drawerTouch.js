@@ -23,6 +23,7 @@ var currentSegmentXY = [];
 // Variables defining the drawing speed.
 var redrawPps = 40;		//Points/second
 var segmentDelay = 200;	//Delay in milliseconds between two segments
+var maxRedrawTime = 3;	//Max redraw time in seconds
 
 var drawingIndex = 0;
 var redrawCan;
@@ -83,6 +84,11 @@ function redraw() {
 		else {
 			nbDrawings = nbDrawings + drawingXY[i].length - 1;
 		}
+	}
+	if (nbDrawings*1.0/redrawPps + (drawingXY.length-1)*segmentDelay*1.0/1000 > maxRedrawTime) {
+		redrawPps = Math.ceil(nbDrawings*1.0/maxRedrawTime);
+		redrawDelay = 1000/redrawPps;
+		segmentWaitCntMax = Math.round(segmentDelay/redrawDelay);
 	}
 	redrawInterval = window.setInterval(redrawPoints, redrawDelay);
 	
