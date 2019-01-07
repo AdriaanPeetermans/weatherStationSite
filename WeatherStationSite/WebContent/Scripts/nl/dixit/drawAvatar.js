@@ -14,7 +14,7 @@ var canvas,ctx;
 var mouseX,mouseY,mouseDown=0,mousePrevX=-1,mousePrevY=-1;
 
 // Variables to keep track of the touch position
-var touchX,touchY,touxhPrevX=-1,touchPrevY=-1;
+var touchX,touchY,touchPrevX=-1,touchPrevY=-1;
 
 // Variable array to hold x and y coordinates of drawing
 var drawingXY = [];
