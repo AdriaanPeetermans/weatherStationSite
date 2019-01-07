@@ -14,7 +14,7 @@ window.onresize = function(e) {
 function init() {
 	document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
 	bottomAnimatorInterval = window.setInterval(bottomAnimator, frameDur);
-	serverPort = getServerPort();
+	getServerPort();
 }
 
 var fps = 60;				//Frames/second
