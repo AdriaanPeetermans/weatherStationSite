@@ -14,6 +14,7 @@ window.onresize = function(e) {
 function init() {
 	document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
 	bottomAnimatorInterval = window.setInterval(bottomAnimator, frameDur);
+	serverPort = getServerPort();
 }
 
 var fps = 60;				//Frames/second
@@ -65,18 +66,12 @@ function codeChange(el) {
 	if (el.value.length > 6) {
 		el.value = el.value.substring(0,6);
 	}
-	if (el.value == "1A2B3C") {
-		document.getElementById("checkIm").src = "../../../Images/dixit/checkCorrect.png";
-	}
-	else {
-		if (el.value.length == 6) {
-			document.getElementById("checkIm").src = "../../../Images/dixit/checkWrong.png";
-		}
-		else {
-			document.getElementById("checkIm").src = "../../../Images/dixit/checkUnknown.png";
-		}
-	}
 	drawChecker(el.value.length);
+	if (el.value.length != 6) {
+		document.getElementById("checkIm").src = "../../../Images/dixit/checkUnknown.png";
+		return;
+	}
+	checkCode(el.value);
 }
 
 function drawChecker(length) {
@@ -85,4 +80,74 @@ function drawChecker(length) {
 	checkerCtx.clearRect(0, 0, checkerCan.width, checkerCan.height);
 	checkerCtx.fillStyle = "#80D9B2";
 	checkerCtx.fillRect(0, 0, checkerCan.width*length/6.0, checkerCan.height);
+}
+
+var serverAddress = 'ws://127.0.0.1:';
+var serverPort = 9010;
+var connection;
+
+function getServerPort() {
+	connection = new WebSocket(serverAddress + serverPort);
+	
+	connection.onopen = function() {
+		connection.send('getServer');
+	};
+	
+	connection.onerror = function (error) {
+	    document.write('WebSocket Error ' + error + "<br>");
+	};
+	
+	connection.onmessage = function (e) {
+	    serverPort = parseInt(e.data);
+	    connection.close();
+	};
+}
+
+function checkCode(code) {
+	if (code.length != 6) {
+		return -1;
+	}
+	connection = new WebSocket(serverAddress + serverPort);
+	
+	connection.onopen = function() {
+		connection.send('checkCode#' + code);
+	};
+	
+	connection.onerror = function (error) {
+	    document.write('WebSocket Error ' + error + "<br>");
+	};
+	
+	connection.onmessage = function (e) {
+		if (e.data == 1) {
+			document.getElementById("checkIm").src = "../../../Images/dixit/checkCorrect.png";
+		}
+		else {
+			document.getElementById("checkIm").src = "../../../Images/dixit/checkWrong.png";
+		}	
+	    connection.close();
+	};
+}
+
+function join() {
+	code = document.getElementById("codeInput").value;
+	connection = new WebSocket(serverAddress + serverPort);
+	
+	connection.onopen = function() {
+		connection.send('joinGame#' + code);
+	};
+	
+	connection.onerror = function (error) {
+	    document.write('WebSocket Error ' + error + "<br>");
+	};
+	
+	connection.onmessage = function (e) {
+	    connection.close();
+	    if (e.data == 1) {
+	    	window.open("drawAvatar.html?port=" + serverPort, "_self");
+	    }
+	    else {
+	    	document.getElementById("codeInput").value = "";
+	    	drawChecker(0);
+	    }
+	};
 }
