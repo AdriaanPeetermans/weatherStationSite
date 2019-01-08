@@ -365,8 +365,8 @@ function ready(canvas, ctx) {
 	
 	connection.onmessage = function (e) {
 		var vip = parseInt(e.data);
-		window.alert(vip);
 	    connection.close();
+	    window.open("waitPlayers.html?port=" + serverPort + "&vip=" + vip, "_self");
 	};
 }
 
