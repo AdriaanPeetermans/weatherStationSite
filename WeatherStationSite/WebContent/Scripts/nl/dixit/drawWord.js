@@ -91,30 +91,6 @@ function redraw() {
 		segmentWaitCntMax = Math.round(segmentDelay/redrawDelay);
 	}
 	redrawInterval = window.setInterval(redrawPoints, redrawDelay);
-	
-//	for (var i = 0; i < drawingXY.length; i++) {
-//		var segment = drawingXY[i];
-//		var segmentColor = segment[0].color;
-//		var segmentSize = segment[0].size;
-//		ctx.fillStyle = segmentColor;
-//		ctx.beginPath();
-//		if (segment.length == 1) {
-//			ctx.arc(segment[0].x, segment[0].y, segmentSize, 0, Math.PI*2, true);
-//			ctx.closePath();
-//			ctx.fill();
-//			
-//		}
-//		else {
-//			for (j = 1; j < segment.length; j++) {
-//				ctx.strokeStyle = segmentColor;
-//				ctx.lineWidth = 2*segmentSize;
-//				ctx.lineCap = "round";
-//				ctx.moveTo(segment[j-1].x,segment[j-1].y);
-//				ctx.lineTo(segment[j].x,segment[j].y);
-//				ctx.stroke();
-//			}
-//		}
-//	}
 }
 
 // Draws a dot at a specific position on the supplied canvas name
@@ -277,20 +253,24 @@ function init() {
 //    redrawCtx = redrawCan.getContext('2d');
     document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
     
-    //Init timer:
-    window.setInterval(timer, 1000);
 }
 
 var connection;
 var serverAddress = 'ws://127.0.0.1:';
 var serverPort;
+var vip = 0;
+var word;
+var name;
 
 function getColors() {
 	var queryString = decodeURIComponent(window.location.search);
 	queryString = queryString.substring(1);
 	var queries = queryString.split("&");
 	serverPort = parseInt(queries[0].split("=")[1]);
+	vip = parseInt(queries[1].split("=")[1]);
+	name = queries[2].split("=")[1];
 	
+	document.getElementById("nameHolder").innerHTML = name;
 	
 	connection = new WebSocket(serverAddress + serverPort);
 	
@@ -303,14 +283,29 @@ function getColors() {
 	};
 	
 	connection.onmessage = function (e) {
-		var colors = e.data.split("#");
-		color1 = "#" + colors[1];
-		color2 = "#" + colors[2];
-		color = color1;
-		document.getElementById("colorBlock1").style.backgroundColor = color1;
-		document.getElementById("colorBlock2").style.backgroundColor = color2;
-	    drawDotShower();
-	    connection.close();
+		parts = e.data.split("#");
+		switch (parts[0]) {
+			case "colors":
+				color1 = "#" + parts[1];
+				color2 = "#" + parts[2];
+				color = color1;
+				document.getElementById("colorBlock1").style.backgroundColor = color1;
+				document.getElementById("colorBlock2").style.backgroundColor = color2;
+			    drawDotShower();
+			    connection.send("getWord");
+			    break;
+			case "word":
+				word = parts[1];
+				if (word == "nikske") {
+					connection.send("getWord");
+					return;
+				}
+				startTime = parseInt(parts[2]);
+				nowTime = startTime;
+				document.getElementById("wordHolder").innerHTML = word;
+			    window.setInterval(timer, 1000);
+				break;
+		}
 	};
 }
 
@@ -330,9 +325,9 @@ var maxSize = 30;
 
 var minSize = 5;
 
-var startTime = 120;	//Seconds
+var startTime;	//Seconds
 
-var nowTime = startTime;
+var nowTime;
 
 function drawDotShower() {
 	var showerCanvas = document.getElementById("sizeShowerCanvas");
@@ -350,41 +345,21 @@ function changeSize(el) {
 	drawDotShower();
 }
 
-function ready(canvas, ctx) {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    connection = new WebSocket(serverAddress + serverPort);
-	
-	connection.onopen = function() {
-		connection.send("addPlayer#" + packData());
-	};
-	
-	connection.onerror = function (error) {
-	    document.write('WebSocket Error ' + error + "<br>");
-	};
-	
-	connection.onmessage = function (e) {
-		var vip = parseInt(e.data);
-	    connection.close();
-	    window.open("waitPlayers.html?port=" + serverPort + "&vip=" + vip + "&name=" + document.getElementById("nameInput").value, "_self");
-	};
-}
-
-//segment1%segment2%segment3% ..., segment: color&size&length&x0&y0&x1&y1& ...
-function packData() {
-	var result = document.getElementById("nameInput").value + "#";
-	for (var i = 0; i < drawingXY.length; i++) {
-		var segment = drawingXY[i];
-		var color = segment[0].color.substring(1,7);
-		var size = segment[0].size;
-		result = result + color + "&" + size + "&" + segment.length;
-		for (var j = 0; j < segment.length; j++) {
-			result = result + "&" + segment[j].x + "&" + segment[j].y;
-		}
-		result = result + "%";
-	}
-	return result;
-}
+////segment1%segment2%segment3% ..., segment: color&size&length&x0&y0&x1&y1& ...
+//function packData() {
+//	var result = document.getElementById("nameInput").value + "#";
+//	for (var i = 0; i < drawingXY.length; i++) {
+//		var segment = drawingXY[i];
+//		var color = segment[0].color.substring(1,7);
+//		var size = segment[0].size;
+//		result = result + color + "&" + size + "&" + segment.length;
+//		for (var j = 0; j < segment.length; j++) {
+//			result = result + "&" + segment[j].x + "&" + segment[j].y;
+//		}
+//		result = result + "%";
+//	}
+//	return result;
+//}
 
 function changeColor(col) {
 	if (col == 1) {
@@ -438,9 +413,23 @@ function readyMouseOut() {
 	readyBut.style.color = "#2C3E50";
 }
 
-function nameChange(el) {
-	if (el.value.length > 10) {
-		el.value = el.value.substring(0, 10);
+function ready(canvas, ctx) {
+	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	connection.send("sendDrawing#" + packData());
+	window.open("waiting.html?port=" + serverPort + "&vip=" + vip + "&name=" + name + "&next=giveWord", "_self");
+}
+
+function packData() {
+	var result = "";
+	for (var i = 0; i < drawingXY.length; i++) {
+		var segment = drawingXY[i];
+		var color = segment[0].color.substring(1,7);
+		var size = segment[0].size;
+		result = result + color + "&" + size + "&" + segment.length;
+		for (var j = 0; j < segment.length; j++) {
+			result = result + "&" + segment[j].x + "&" + segment[j].y;
+		}
+		result = result + "%";
 	}
-	document.getElementById("nameHolder").innerHTML = el.value;
+	return result;
 }

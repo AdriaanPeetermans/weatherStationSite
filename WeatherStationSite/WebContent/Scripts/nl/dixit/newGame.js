@@ -81,6 +81,9 @@ function respons(mes) {
 			var drawing = parts[3];
 			addPlayer(playerName, drawing, playerIndex);
 			break;
+		case "startGame":
+			var waitingTime = parseInt(parts[1]);
+			window.open("playersDrawing.html?port=" + serverPort + "&time=" + waitingTime, "_self");
 	}
 }
 

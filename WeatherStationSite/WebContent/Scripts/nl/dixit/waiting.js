@@ -16,39 +16,39 @@ function init() {
 	window.setInterval(loadingIm, frameDelay);
 	getParams();
 	connectServer();
-	if (host) {
-		drawHostButton();
-	}
 }
 
 var serverPort;
-var host;
+var vip;
 var serverAddress = 'ws://127.0.0.1:';
 var connection;
 var name;
+var nextWindow;
+var state;
 
 function getParams() {
 	var queryString = decodeURIComponent(window.location.search);
 	queryString = queryString.substring(1);
 	var queries = queryString.split("&");
 	serverPort = parseInt(queries[0].split("=")[1]);
-	host = parseInt(queries[1].split("=")[1]);
+	vip = parseInt(queries[1].split("=")[1]);
 	name = queries[2].split("=")[1];
-}
-
-function drawHostButton() {
-	var buttonBlock = document.getElementById("buttonBlock");
-	buttonBlock.innerHTML = "Start het spel!";
-	buttonBlock.addEventListener('mouseover', mouseIn, false);
-	buttonBlock.addEventListener('mouseout', mouseOut, false);
-	buttonBlock.addEventListener('click', startGame, false);
-	buttonBlock.style.cursor = "pointer";
+	nextWindow = queries[3].split("=")[1];
+	switch (nextWindow) {
+		case "giveWord":
+			state = 1;
+			break;
+		default:
+			state = 999;
+			break;
+	}
 }
 
 function connectServer() {
 	connection = new WebSocket(serverAddress + serverPort);
 	
 	connection.onopen = function() {
+		connection.send("goFurther#" + state);
 	};
 	
 	connection.onerror = function (error) {
@@ -63,29 +63,11 @@ function connectServer() {
 function respons(mes) {
 	var parts = mes.split("#");
 	switch(parts[0]) {
-		case "players":
+		case "endWait":
+			window.open(nextWindow + ".html?port=" + serverPort + "&vip=" + vip + "&name=" + name, "_self");
 			break;
-		case "startGame":
-			window.open("drawWord.html?port=" + serverPort + "&vip=" + host + "&name=" + name, "_self");
 	}
 }
-
-function startGame() {
-	var buttonBlock = document.getElementById("buttonBlock");
-	buttonBlock.removeEventListener('click', startGame);
-	connection.send("startGame");
-}
-
-function mouseIn() {
-	el = document.getElementById("buttonBlock");
-	el.style.color = "#EBEDEF";
-}
-
-function mouseOut() {
-	el = document.getElementById("buttonBlock");
-	el.style.color = "#2C3E50";
-}
-
 
 var fps = 40;		//Frames per second
 var rps = 0.2;		//Rotations per second
