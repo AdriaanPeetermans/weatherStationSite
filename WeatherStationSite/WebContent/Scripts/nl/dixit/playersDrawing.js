@@ -229,7 +229,7 @@ function playerReady(playerIndex) {
 	}
 	shifterIntervals[0] = window.setInterval(function() { shiftChar(numberPlayers-numberReady+1, numberPlayers-numberReady, 0); }, shiftDelay);
 	if (numberReady == numberPlayers) {
-		window.open("showDrawing.html?port=" + serverPort + "&drawing=1", "_self");
+		window.open("showDrawing.html?port=" + serverPort + "&drawing=0", "_self");
 	}
 }
 

@@ -38,6 +38,9 @@ function getParams() {
 		case "giveWord":
 			state = 1;
 			break;
+		case "voteWord":
+			state = 2;
+			break;
 		default:
 			state = 999;
 			break;

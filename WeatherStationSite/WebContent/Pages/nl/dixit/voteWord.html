@@ -27,28 +27,30 @@
 		</div>
 		<div class="mainBlock" id="mainBlock">
 			<div class="mainHolder">
-				<div class="titleBlock">
-					<div class="titleHolder">
-						Speel dixit!
-					</div>
-				</div>
-				<div class="titleImageBlock">
-					<div class="titleImageHolder">
-						<img src = "../../../Images/dixit/dixitTitle.png" height="250px">
-					</div>
-				</div>
-				<div class="buttonBlock">
-					<div class="leftButtonBlock">
-						<div class="leftButtonHolder" onclick="join();" onmouseover="mouseIn(this);" onmouseout="mouseOut(this);">
-							Sluit aan
-						</div>
-					</div>
-					<div class="rightButtonBlock">
-						<div class="rightButtonHolder" onclick="newGame();" onmouseover="mouseIn(this);" onmouseout="mouseOut(this);">
-							Nieuw spel
-						</div>
-					</div>
-				</div>
+				<div class="leftside">
+		        	<canvas id="loadCan" width="500px" height="50px"></canvas>
+		        	<div class="wordBlock">
+		        		<div class="wordHolder" id="wordHolder">
+		        			Kies de beste beschrijving:
+		        		</div>
+		        	</div>
+		        	<div class="spacerBlock"></div>
+		        	<div class="voteBlock">
+		        		<div class="voteChoiseBlock" id="voteChoiseBlock">
+		        		</div>
+		        	</div>
+		            <div class="bottomBlock">
+		            	<div class="nameBlock">
+		            		<div class="nameHolder" id="nameHolder">
+	            			</div>
+		            	</div>
+		            	<div class="timeBlock">
+		            		<div class="timeHolder" id="timeHolder">
+		            			00:00
+	            			</div>
+		            	</div>
+		            </div>
+		        </div>
 			</div>
 		</div>
 	</body>

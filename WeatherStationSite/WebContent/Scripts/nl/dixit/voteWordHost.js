@@ -54,17 +54,7 @@ function getParams() {
 	    		drawWordHolders();
 	    		break;
 	    	case "voteWord":
-	    		//window.open("voteWordHost.html?port=" + serverPort + "&drawing=" + drawingNumber, "_self");
-	    		window.clearInterval(holderTimer);
-	    		connection.send("getWords");
-	    		break;
-	    	case "words":
-	    		var numberWords = parseInt(parts[1]);
-	    		for (var i = 0; i < numberWords; i++) {
-	    			playerContainers[i].innerHTML = parts[2+i];
-	    			playerContainers[i].classList.remove('playerWordContainer');
-	    			playerContainers[i].classList.add('playerWordContainerNoBlur');
-	    		}
+	    		window.open("voteWordHost.html?port=" + serverPort + "&drawing=" + drawingNumber, "_self");
 	    		break;
 	    }
 	};
@@ -200,7 +190,6 @@ function stringLength(number, length) {
 
 var playerContainers = [];
 var dirs = [1, 1, 1, 1, 1, 1, 1, 1, 1];
-var holderTimer;
 
 function drawWordHolders() {
 	for (var i = 0; i < numberPlayers+1; i++) {
@@ -216,7 +205,7 @@ function drawWordHolders() {
 		container.innerHTML = str;
 		playerContainers.push(container);
 	}
-	holderTimer = window.setInterval(function() { wordHolderTimer(); }, htDelay);
+	window.setInterval(function() { wordHolderTimer(); }, htDelay);
 }
 
 var htWps = 8;

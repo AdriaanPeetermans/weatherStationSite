@@ -8,7 +8,6 @@ window.onerror = function(msg, url, line) {
 }
 
 function init() {
-	window.alert("hier");
 	getParams();
     document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
 }
@@ -94,11 +93,11 @@ function readyMouseOut(el) {
 	el.style.color = "#2C3E50";
 }
 
-function ready(canvas, ctx) {
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	connection.send("sendDrawing#" + packData());
-	window.open("giveWord.html?port=" + serverPort + "&vip=" + vip + "&name=" + name, "_self");
-}
+//function ready(canvas, ctx) {
+//	ctx.clearRect(0, 0, canvas.width, canvas.height);
+//	connection.send("sendDrawing#" + packData());
+//	window.open("giveWord.html?port=" + serverPort + "&vip=" + vip + "&name=" + name, "_self");
+//}
 
 function wordChange(el) {
 	if (el.value.length > 25) {
@@ -108,6 +107,10 @@ function wordChange(el) {
 
 function ready() {
 	var wordInput = document.getElementById("wordInput");
+	if (wordInput.value.length == 0) {
+		return;
+	}
 	connection.send("sendWord#" + wordInput.value);
-	window.open("voteWord.html?port=" + serverPort + "&vip=" + vip + "&name=" + name, "_self");
+	window.open("waiting.html?port=" + serverPort + "&vip=" + vip + "&name=" + name + "&next=voteWord", "_self");
+	//window.open("voteWord.html?port=" + serverPort + "&vip=" + vip + "&name=" + name, "_self");
 }
