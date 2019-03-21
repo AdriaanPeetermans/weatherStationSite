@@ -9,15 +9,15 @@ window.onerror = function(msg, url, line) {
 
 var Graphs;
 
-var activeGraphType = [1, 0];
+var activeGraphType = [1, 0, 0, 0];
 
-var graphNames = ["Maximum temperatuur", "Minimum temperatuur"];
+var graphNames = ["Maximum temperatuur", "Minimum temperatuur", "Zon op", "Zon weg"];
 
-var graphColors = ['rgba(245, 176, 65, 1)', 'rgba(118, 215, 196, 1)'];
+var graphColors = ['rgba(245, 176, 65, 1)', 'rgba(118, 215, 196, 1)', 'rgba(229, 152, 102, 1)', 'rgba(36, 113, 163, 1)'];
 
-var graphBackColors = ['rgba(245, 176, 65, 0.2)', 'rgba(118, 215, 196, 0.2)'];
+var graphBackColors = ['rgba(245, 176, 65, 0.2)', 'rgba(118, 215, 196, 0.2)', 'rgba(229, 152, 102, 0.2)', 'rgba(36, 113, 163, 0.2)'];
 
-var pointColors = ['rgba(231, 76, 60, 1)', 'rgba(46, 134, 193, 1)'];
+var pointColors = ['rgba(231, 76, 60, 1)', 'rgba(46, 134, 193, 1)', 'rgba(229, 152, 102, 1)', 'rgba(36, 113, 163, 1)'];
 
 var myChart;
 
@@ -30,9 +30,9 @@ var periodLength = 1;
 
 var whichPeriod = 2;
 
-var minutePeriod = 5;
+var minutePeriod = 24*60;
 
-var startMinute = 2;
+var startMinute = 1;
 
 var tryNextDataB = false;
 
@@ -51,7 +51,9 @@ window.onload = function() {
 	};
 	
 	connection.onerror = function (error) {
-	    document.write('WebSocket Error ' + error + "<br>");
+		window.alert("calculatedGraph");
+		console.log(error);
+	    //document.write('WebSocket Error ' + error + "<br>");
 	};
 	
 	connection.onmessage = function (e) {
@@ -81,11 +83,23 @@ function respons(mes) {
 		points = points.split(",");
 		var tempMax = [];
 		var tempMin = [];
+		var sunUp = [];
+		var sunDown = [];
 		for (var j = 0; j < numberPoints; j++) {
-			tempMax.push(parseFloat(points[j*2]));
-			tempMin.push(parseFloat(points[j*2+1]));
+			switch (i) {
+				case 0:
+					tempMax.push(parseFloat(points[j*2]));
+					tempMin.push(parseFloat(points[j*2+1]));
+				break;
+				case 1:
+					tempMax.push(parseFloat(points[j*4]));
+					tempMin.push(parseFloat(points[j*4+1]));
+					sunUp.push(points[j*4+2]);
+					sunDown.push(points[j*4+3]);
+				break;
+			}
 		}
-		var graphData = {name:graphName, length:numberPoints, tempMax:tempMax, tempMin:tempMin};
+		var graphData = {name:graphName, length:numberPoints, tempMax:tempMax, tempMin:tempMin, sunUp:sunUp, sunDown:sunDown};
 		graphDatas.push(graphData);
 		index = index + 3
 	}
@@ -197,30 +211,86 @@ function adjustGraph() {
 		for (var i = 0; i < activeGraphType.length; i++) {
 			if (activeGraphType[i]) {
 				var data;
-				var axesID = "yAxis-0";
+				var axesID;
 				var yAxisName;
+				var yAx;
 				switch (i) {
 					case 0:
-						data = Graphs.graph[1].tempMax;
-						yAxisName = "Temperatuur [°C]";
-						break;
 					case 1:
-						data = Graphs.graph[1].tempMin;
+						switch (i) {
+							case 0:
+								data = Graphs.graph[1].tempMax;
+								break;
+							case 1:
+								data = Graphs.graph[1].tempMin;
+								break;
+						}
+						axesID = "yAxis-Te";
 						yAxisName = "Temperatuur [°C]";
+						yAx = {
+							type: 'linear',
+							display: true,
+							position: 'left',
+							id: axesID,
+							gridLines: {drawOnChartArea: false},
+							scaleLabel: {
+								display: true,
+								labelString: yAxisName
+							}
+						};
+						break;
+					case 2:
+					case 3:
+						var datas;
+						switch (i) {
+							case 2:
+								datas = Graphs.graph[1].sunUp;
+								break;
+							case 3:
+								datas = Graphs.graph[1].sunDown;
+								break;
+						}
+						data = [];
+						for (var j = 0; j < datas.length; j++) {
+							if (datas[j] == "*") {
+								data.push(null);
+								continue;
+							}
+							var ti = firstDayDate.clone();
+							ti.add(parseInt(datas[j].substring(0,2)), 'H');
+							ti.add(parseInt(datas[j].substring(2,4)), 'm')
+							data.push(ti);
+						}
+						axesID = "yAxis-Ti";
+						yAxisName = "Tijd";
+						yAx = {
+							type: 'time',
+							display: true,
+							position: 'left',
+							id: axesID,
+							gridLines: {drawOnChartArea: false},
+							scaleLabel: {
+								display: true,
+								labelString: yAxisName
+							},
+							time: {
+								min: firstDayDate.clone(),
+								max: firstDayDate.clone().add(24, 'H'),
+								unit: 'hour',
+								displayFormats: {
+				                    hour: 'HH:mm',
+				                    day: 'DD MMM',
+				                    month: 'MMM YYYY'
+				                }
+				            },
+							ticks: {
+			                    beginAtZero: false,
+			                    reverse: false
+			                }
+						};
 						break;
 				}
-				var yAx = {
-					type: 'linear',
-					display: true,
-					position: 'left',
-					id: axesID,
-					gridLines: {drawOnChartArea: false},
-					scaleLabel: {
-						display: true,
-						labelString: yAxisName
-					}
-				};
-				if ((i != 1) || (!activeGraphType[0])) {
+				if (((i != 1) || (!activeGraphType[0])) && ((i != 3) || (!activeGraphType[2]))) {
 					yAxes.push(yAx);
 				}
 				if ((data.length != 0) && ((document.getElementById("sensor1On").checked) || tryNextDataS1)) {
@@ -246,36 +316,38 @@ function adjustGraph() {
 					}
 					document.getElementById("sensor1On").checked = false;
 				}
-				switch(i) {
-					case 0:
-						data = Graphs.graph[0].tempMax;
-						break;
-					case 1:
-						data = Graphs.graph[0].tempMin;
-						break;
-				}
-				if ((data.length != 0) && ((document.getElementById("basisOn").checked) || tryNextDataB)) {
-					graphItem = {
-							label: Graphs.graph[0].name + " " + graphNames[i],
-							data: generateData(data, time),
-							backgroundColor: graphBackColors[i],
-							borderColor: graphColors[i],
-							borderWidth: 3,
-							pointRadius: pointRadius,
-							pointBackgroundColor: pointColors[i],
-							pointBorderColor: pointColors[i],
-							yAxisID: axesID,
-							//xAxisID: "xAxes"
+				if (i < 2) {
+					switch(i) {
+						case 0:
+							data = Graphs.graph[0].tempMax;
+							break;
+						case 1:
+							data = Graphs.graph[0].tempMin;
+							break;
 					}
-					dataSet.push(graphItem);
-					document.getElementById("basisOn").checked = true;
-					tryNextDataB = false;
-				}
-				else {
-					if ((data.length == 0) && (!document.getElementById("basisOn").checked)) {
-						tryNextDataB = true;
+					if ((data.length != 0) && ((document.getElementById("basisOn").checked) || tryNextDataB)) {
+						graphItem = {
+								label: Graphs.graph[0].name + " " + graphNames[i],
+								data: generateData(data, time),
+								backgroundColor: graphBackColors[i],
+								borderColor: graphColors[i],
+								borderWidth: 3,
+								pointRadius: pointRadius,
+								pointBackgroundColor: pointColors[i],
+								pointBorderColor: pointColors[i],
+								yAxisID: axesID,
+								//xAxisID: "xAxes"
+						}
+						dataSet.push(graphItem);
+						document.getElementById("basisOn").checked = true;
+						tryNextDataB = false;
 					}
-					document.getElementById("basisOn").checked = false;
+					else {
+						if ((data.length == 0) && (!document.getElementById("basisOn").checked)) {
+							tryNextDataB = true;
+						}
+						document.getElementById("basisOn").checked = false;
+					}
 				}
 			}
 		}
@@ -332,17 +404,17 @@ function changePeriod(el) {
 	periodLength = el.selectedIndex + 1;
 	switch (periodLength) {
 		case 1:
-			minutePeriod = 5;
-			startMinute = 2;
+			minutePeriod = 24*60;
+			startMinute = 1;
 			break;
 		case 2:
-			minutePeriod = 30;
-			startMinute = 15;
+			minutePeriod = 24*60;
+			startMinute = 1;
 			break;
 		case 3:
 		case 4:
 			minutePeriod = 24*60;
-			startMinute = 12*60;
+			startMinute = 1;
 			break;
 	}
 	loadNewData();

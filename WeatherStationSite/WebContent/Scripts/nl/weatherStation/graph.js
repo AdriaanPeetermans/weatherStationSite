@@ -49,7 +49,9 @@ window.onload = function() {
 	};
 	
 	connection.onerror = function (error) {
-	    document.write('WebSocket Error ' + error + "<br>");
+		window.alert("graph");
+		console.log(error);
+	    //document.write('WebSocket Error ' + error + "<br>");
 	};
 	
 	connection.onmessage = function (e) {

@@ -11,7 +11,7 @@ window.onload = function() {
 	loadGraph();
 }
 
-var activeGraps = [1,0,0,0,0,0];
+var activeGraps = [1,0,0,0];
 
 function mouseEnterGraphType(element) {
 	element.style.color = "darkred";

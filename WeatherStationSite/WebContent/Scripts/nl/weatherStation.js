@@ -20,7 +20,18 @@ window.onload = function() {
 	};
 	
 	connection.onerror = function (error) {
-	    document.write('WebSocket Error ' + error + "<br>");
+		console.log(error);
+		document.getElementById("tempOut").innerHTML = "-°C";
+		document.getElementById("tempSer").innerHTML = "-°C";
+		document.getElementById("tempIn").innerHTML = "-°C";
+		document.getElementById("moistOut").innerHTML = "-%";
+		document.getElementById("moistSer").innerHTML = "-%";
+		document.getElementById("moistIn").innerHTML = "-%";
+		document.getElementById("press").innerHTML = "- hPa";
+		document.getElementById("lightOut").innerHTML = "-";
+		document.getElementById("pv").innerHTML = "- V";
+		document.getElementById("bv").innerHTML = "- V";
+		document.getElementById("time").innerHTML = "-";
 	};
 	
 	connection.onmessage = function (e) {
