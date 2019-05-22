@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Files</title>
+		<script src="../../../Scripts/nl/weatherStation/files.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="../../../Style/weatherStation/files.css">
+	</head>
+	<body onload="init()">
+		<div class="mainBlock">
+			<div class="leftBuffer"></div>
+			<div class="topBuffer"></div>
+			<div class="path" id="path" onmouseenter="mouseOverPath()" onmouseleave="mouseOutPath()">database</div>
+			<div class="pathSpacer"></div>
+			<div class="legend" id="legend">
+				<div class="downloadLegend">Download</div>
+				<div class="nameLegend">Naam</div>
+				<div class="onDiskLegend">Op de schijf</div>
+			</div>
+			<div class="legendSpacer" id="legendSpacer"></div>
+			<div class="pseudoMainBlock" id="mainBlock">
+<!-- 			<div class="fileFolder" onclick="fileFolderEnter(this)"> -->
+<!-- 				<div class="checkBox"> -->
+<!-- 					<input type="checkbox" name="fileCheck"> -->
+<!-- 				</div> -->
+<!-- 				<div class="fileFolderPict"> -->
+<!-- 					<img src = "../../../Images/file.png" height="30px"> -->
+<!-- 				</div> -->
+<!-- 				<div class="fileFolderName">04.txt</div> -->
+<!-- 				<div class="onDisk">Ja</div> -->
+<!-- 			</div> -->
+			</div>
+			<div class="downloadBuffer"></div>
+			<div class="downloadHolder">
+				<div id="downloadButton" class="downloadButton" onclick="download()" onmouseout="mouseOutDownload(this)" onmouseover="mouseInDownload(this)">Download</div>
+			</div>
+		</div>
+	</body>
+</html>

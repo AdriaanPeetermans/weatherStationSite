@@ -1,0 +1,348 @@
+@CHARSET "UTF-8";
+
+html, body {
+	margin: 0;
+	padding: 0;
+	border: none;
+}
+
+.mainBlock {
+	width: 100%;
+	height: 100%;
+}
+
+.pseudoMainBlock {
+	width: 100%;
+	height: 100%;
+}
+
+.leftBuffer {
+	width: 30px;
+	height: 100%;
+	float: left;
+}
+
+.topBuffer {
+	width: 100%;
+	height: 30px;
+}
+
+.path {
+	width: 489px;
+	height: 26px;
+	background-color: #E0E0E0;
+	border-width: 2px;
+	border-style: solid;
+	border-color: darkred;
+	margin-left: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	font-family: arial;
+ 	font-size: 12px;
+ 	border-radius: 15px;
+ 	padding-left: 10px;
+}
+
+.pathBlock {
+	height: 26px;
+	font-family: arial;
+ 	font-size: 12px;
+ 	display: flex;
+	align-items: center;
+	float: left;
+	color: darkred;
+	cursor: pointer;
+}
+
+.pathSpacer {
+	width: 503px;
+	height: 15px;
+}
+
+.downloadHolder {
+	width: 503px;
+	height: 30px;
+	margin-left: 30px;
+}
+
+.legend {
+	width: 503px;
+	height: 30px;
+	margin-left: 30px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: black;
+	border-top-style: solid;
+	border-top-width: 1px;
+	border-top-color: black;
+}
+
+.downloadLegend {
+	width: 70px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+	font-size: 12px;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-color: black;
+	float: left;
+}
+
+.nameLegend {
+	width: 300px;
+	height: 30px;
+	margin-left: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+ 	font-size: 12px;
+ 	border-left-style: solid;
+ 	border-right-style: solid;
+ 	border-right-width: 1px;
+ 	border-left-width: 1px;
+ 	border-color: black;
+ 	float: left;
+}
+
+.onDiskLegend {
+	width: 100px;
+	height: 30px;
+	margin-left: 400px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+	font-size: 12px;
+}
+
+.legendSpacer {
+	width: 503px;
+	height: 15px;
+	margin-left: 30px;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: black;
+}
+
+.fileFolder {
+	width: 503px;
+	height: 30px;
+	margin-left: 30px;
+	cursor: pointer;
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	border-bottom-color: black;
+}
+
+.checkBox {
+	width: 70px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	float: left;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-color: black;
+}
+
+.fileFolderPict {
+	width: 30px;
+	height: 30px;
+	float: left;
+	margin-left: 0px;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-color: black;
+}
+
+.fileFolderName {
+	width: 290px;
+	height: 30px;
+	margin-left: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: left;
+	font-family: arial;
+ 	font-size: 12px;
+ 	border-right-style: solid;
+ 	border-right-width: 1px;
+ 	border-right-color: black;
+ 	float: left;
+}
+
+.onDisk {
+	width: 100px;
+	height: 30px;
+	margin-left: 400px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+	font-size: 12px;
+}
+
+.downloadBuffer {
+	width: 503px;
+	height: 15px;
+}
+
+.downloadButton {
+	width: 68px;
+	height: 28px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+	color: #E0E0E0;
+	font-size: 12px;
+	background-color: darkred;
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+#test {
+    position: absolute;
+    visibility: hidden;
+    height: auto;
+    width: auto;
+    white-space: nowrap;
+    font-family: arial;
+ 	font-size: 12px;
+}
+
+#fileContainer {
+	width: 558px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #E0E0E0;
+	font-family: arial;
+ 	font-size: 12px;
+/*  	margin-left: 30px; */
+ 	padding-top: 5px;
+ 	padding-bottom: 5px;
+ 	padding-left: 5px;
+ 	float: left;
+}
+
+#fileLineNumberContainer {
+	width: 33px;
+	border-style: solid;
+	border-width: 1px;
+	border-color: #E0E0E0;
+	font-family: arial;
+ 	font-size: 12px;
+ 	margin-left: 30px;
+ 	padding-top: 5px;
+ 	padding-bottom: 5px;
+ 	float: left;
+ 	background-color: #E0E0E0;
+ 	text-align: right;
+ 	color: #85929E;
+ 	padding-right: 2px;
+}
+
+.fileTop {
+	width: 602px;
+	height:  40px;
+	background-color: #E0E0E0;
+	margin-left: 30px;
+	border-top-left-radius: 5px;
+	border-top-right-radius: 5px;
+}
+
+.fileDownloadContainer {
+	width: 100px;
+	height: 40px;
+	float: left;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.fileDownloadButton {
+	width: 68px;
+	height: 28px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+	color: #E0E0E0;
+	font-size: 12px;
+	background-color: darkred;
+	cursor: pointer;
+	border-radius: 2px;
+}
+
+.fileDataContainer {
+/* 	width: 100%; */
+	height: 40px;
+	float: left;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+ 	font-size: 12px;
+}
+
+.fileButtonsContainerLeft {
+	width: 90px;
+	height: 40px;
+	float: right;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.fileButtonsContainerRight {
+	width: 90px;
+	height: 40px;
+	float: right;
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+}
+
+.fileButtonLeft {
+	width: 60px;
+	height: 25px;
+	background-color: #F8F9F9;
+	border-right-style: solid;
+	border-right-width: 1px;
+	border-right-color: #E0E0E0;
+	border-top-left-radius: 6px;
+	border-bottom-left-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+ 	font-size: 12px;
+ 	font-color: black;
+ 	cursor: pointer;
+}
+
+.fileButtonRight {
+	width: 60px;
+	height: 25px;
+	background-color: #F8F9F9;
+	border-left-style: solid;
+	border-left-width: 1px;
+	border-left-color: #E0E0E0;
+	border-top-right-radius: 6px;
+	border-bottom-right-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+ 	font-size: 12px;
+ 	font-color: black;
+ 	cursor: pointer;
+}

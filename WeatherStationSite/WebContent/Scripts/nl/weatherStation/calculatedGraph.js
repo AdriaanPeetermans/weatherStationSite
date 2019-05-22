@@ -256,15 +256,15 @@ function adjustGraph() {
 								data.push(null);
 								continue;
 							}
-							var ti = firstDayDate.clone();
-							ti.add(parseInt(datas[j].substring(0,2)), 'H');
-							ti.add(parseInt(datas[j].substring(2,4)), 'm')
-							data.push(ti);
+//							var ti = firstDayDate.clone();
+//							ti.add(parseInt(datas[j].substring(0,2)), 'H');
+//							ti.add(parseInt(datas[j].substring(2,4)), 'm')
+							data.push(parseInt(datas[j].substring(0,2))+parseInt(datas[j].substring(2,4))/60.0);
 						}
 						axesID = "yAxis-Ti";
 						yAxisName = "Tijd";
 						yAx = {
-							type: 'time',
+							type: 'linear',
 							display: true,
 							position: 'left',
 							id: axesID,
@@ -273,16 +273,16 @@ function adjustGraph() {
 								display: true,
 								labelString: yAxisName
 							},
-							time: {
-								min: firstDayDate.clone(),
-								max: firstDayDate.clone().add(24, 'H'),
-								unit: 'hour',
-								displayFormats: {
-				                    hour: 'HH:mm',
-				                    day: 'DD MMM',
-				                    month: 'MMM YYYY'
-				                }
-				            },
+//							time: {
+//								min: firstDayDate.clone(),
+//								max: firstDayDate.clone().add(24, 'H'),
+//								unit: 'hour',
+//								displayFormats: {
+//				                    hour: 'HH:mm',
+//				                    day: 'DD MMM',
+//				                    month: 'MMM YYYY'
+//				                }
+//				            },
 							ticks: {
 			                    beginAtZero: false,
 			                    reverse: false

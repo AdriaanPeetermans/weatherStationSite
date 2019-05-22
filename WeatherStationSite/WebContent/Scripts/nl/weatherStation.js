@@ -53,3 +53,15 @@ function respons(mes) {
 	document.getElementById("bv").innerHTML = parts[10] + " V";
 	document.getElementById("time").innerHTML = parts[11];
 }
+
+function mouseOverSettings(el) {
+	el.style.backgroundColor = "#F1948A";
+}
+
+function mouseOutSettings(el) {
+	el.style.backgroundColor = "#E0E0E0";
+}
+
+function settings() {
+	window.open("weatherStation/settings.html", "_self");
+}
