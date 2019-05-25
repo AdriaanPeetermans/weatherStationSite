@@ -28,7 +28,7 @@ html, body {
 }
 
 .path {
-	width: 489px;
+	width: 590px;
 	height: 26px;
 	background-color: #E0E0E0;
 	border-width: 2px;
@@ -67,7 +67,7 @@ html, body {
 }
 
 .legend {
-	width: 503px;
+	width: 604px;
 	height: 30px;
 	margin-left: 30px;
 	border-bottom-style: solid;
@@ -109,10 +109,25 @@ html, body {
  	float: left;
 }
 
+.sizeLegend {
+	width: 100px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-family: arial;
+ 	font-size: 12px;
+ 	border-right-style: solid;
+ 	border-right-width: 1px;
+ 	border-left-width: 1px;
+ 	border-color: black;
+ 	float: left;
+}
+
 .onDiskLegend {
 	width: 100px;
 	height: 30px;
-	margin-left: 400px;
+	margin-left: 504px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -121,7 +136,7 @@ html, body {
 }
 
 .legendSpacer {
-	width: 503px;
+	width: 604px;
 	height: 15px;
 	margin-left: 30px;
 	border-bottom-style: solid;
@@ -130,7 +145,7 @@ html, body {
 }
 
 .fileFolder {
-	width: 503px;
+	width: 604px;
 	height: 30px;
 	margin-left: 30px;
 	cursor: pointer;
@@ -168,6 +183,20 @@ html, body {
 	display: flex;
 	align-items: center;
 	justify-content: left;
+	font-family: arial;
+ 	font-size: 12px;
+ 	border-right-style: solid;
+ 	border-right-width: 1px;
+ 	border-right-color: black;
+ 	float: left;
+}
+
+.fileFolderSize {
+	width: 100px;
+	height: 30px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	font-family: arial;
  	font-size: 12px;
  	border-right-style: solid;

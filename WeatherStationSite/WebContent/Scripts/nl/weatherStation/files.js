@@ -32,15 +32,18 @@ function getFiles() {
 }
 
 var folders;
+var fileContent;
 
 function respons(mes) {
+	window.alert("bovenste" + mes);
 	var parts = mes.split("#");
 	var responsType = parseInt(parts[0]);
-	var number = parseInt(parts[1]);
+	var numbe;
 	var mainBlock = document.getElementById("mainBlock");
 	mainBlock.innerHTML = "";
 	switch (responsType) {
 		case 0:
+			number = parseInt(parts[1]);
 			folders = [];
 			for (var i = 0; i < number; i++) {
 				var type = parseInt(parts[i*3+2]);
@@ -57,6 +60,7 @@ function respons(mes) {
 						"<div class=\"fileFolderPict\">" +
 						"<img src = \"../../../Images/" + imageName + ".png\" height=\"30px\"></div>" +
 						"<div class=\"fileFolderName\">" + name + "</div>" +
+						"<div class=\"fileFolderSize\">" + size.replace(".",",") + "</div>" +
 						"<div class=\"onDisk\">Ja</div></div>";
 			}
 			mainBlock.style.height = number*31 + "px";
@@ -67,10 +71,11 @@ function respons(mes) {
 			document.getElementById("downloadButton").style.display = "flex";
 			break;
 		case 1:
+			number = parseInt(parts[1]);
 			mainBlock.innerHTML = "<div class=\"fileTop\">" +
 					"<div class=\"fileDownloadContainer\">" +
 					"<div class=\"fileDownloadButton\" onclick=\"fileDownload()\" onmouseout=\"mouseOutFileDownload(this)\" onmouseover=\"mouseInFileDownload(this)\">Download</div>" +
-					"</div><div class=\"fileDataContainer\">" + number + " lijnen | " + parseInt(parts[2])/1000 + " kB</div>" +
+					"</div><div class=\"fileDataContainer\">" + number + " lijnen | " + parts[2].replace(".",",") + " kB</div>" +
 					"<div class=\"fileButtonsContainerRight\">" +
 					"<div class=\"fileButtonRight\" onclick=\"fileSelect()\" onmouseout=\"mouseOutFileBut(this)\" onmouseover=\"mouseInFileBut(this)\">Selecteer</div></div>" +
 					"<div class=\"fileButtonsContainerLeft\">" +
@@ -83,8 +88,10 @@ function respons(mes) {
 			var lineContainer = document.getElementById("fileLineNumberContainer");
 			fileContainer.innerHTML = "";
 			lineContainer.innerHTML = "";
+			fileContent = "";
 			for (var i = 0; i < number; i++) {
 				fileContainer.innerHTML = fileContainer.innerHTML + parts[i+3] + "<br>";
+				fileContent = fileContent + parts[i+3] + "\r\n";
 				lineContainer.innerHTML = lineContainer.innerHTML + (i+1) + "<br>";
 			}
 			document.getElementById("path").innerHTML = path;
@@ -93,6 +100,9 @@ function respons(mes) {
 			document.getElementById("downloadButton").style.display = "none";
 			mainBlock.style.height = (number*14) + "px";
 			lineContainer.style.height = (number*14) + "px";
+			break;
+		case 2:
+			window.alert("hier nu "+mes);
 			break;
 	}
 }
@@ -158,7 +168,19 @@ function mouseInFileBut(el) {
 }
 
 function fileDownload() {
-	
+	parts = path.split("/");
+	var fileName = parts[parts.length-1];
+	downloadFile(fileName, fileContent);
+}
+
+function downloadFile(filename, text) {
+	var element = document.createElement('a');
+	element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+	element.setAttribute('download', filename);
+	element.style.display = 'none';
+	document.body.appendChild(element);
+	element.click();
+	document.body.removeChild(element);
 }
 
 function mouseOutFileDownload(el) {
@@ -198,7 +220,8 @@ function mouseInDownload(el) {
 }
 
 function download() {
-	
+	window.alert("hier");
+	connection.send("2#database/SENSOR1/2019/05#1#01.txt#");
 }
 
 function mouseOverPath() {
