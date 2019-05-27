@@ -5,7 +5,8 @@ function init() {
 }
 
 window.onresize = function(e) {
-	document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
+	//document.getElementById("mainBlock").style.height = window.innerHeight-70 + "px";
+	document.getElementById("mainBlock").style.height = folders.length*31 + "px";
 	document.getElementById("mainBlock").style.width = window.innerWidth-300 + "px";
 }
 
@@ -35,7 +36,17 @@ var folders;
 var fileContent;
 
 function respons(mes) {
-	window.alert("bovenste" + mes);
+	
+	if ((mes[0] != "0") && (mes[0] != "1")) {
+		var reader = new FileReader();
+		reader.readAsArrayBuffer(mes);
+		reader.onloadend = function(event) {
+			var result = reader.result;
+			var array = new Uint8Array(result);
+			downloadZip(array);
+		}
+	}
+	
 	var parts = mes.split("#");
 	var responsType = parseInt(parts[0]);
 	var numbe;
@@ -101,10 +112,55 @@ function respons(mes) {
 			mainBlock.style.height = (number*14) + "px";
 			lineContainer.style.height = (number*14) + "px";
 			break;
-		case 2:
-			window.alert("hier nu "+mes);
-			break;
 	}
+}
+
+function download() {
+	var message = "2#" + path + "#";
+	var names = [];
+	for (var i = 0; i < folders.length; i++) {
+		if (document.getElementById("checkBox_" + i).checked) {
+			names.push(folders[i].name);
+		}
+	}
+	if (names.length == 0) {
+		return;
+	}
+	message = message + names.length + "#";
+	for (var i = 0; i < names.length; i++) {
+		message = message + names[i] + "#";
+	}
+	connection.send(message);
+}
+
+function downloadZip(array) {
+	var firstH = -1;
+	var secondH = -1;
+	for (var i = 0; i < array.length; i++) {
+		if (array[i] == 35) {
+			if (firstH == -1) {
+				firstH = i;
+				continue;
+			}
+			secondH = i;
+			break;
+		}
+	}
+	var messageType = bin2Int(array.slice(0,firstH));
+	var zipLength = bin2Int(array.slice(firstH+1,secondH));
+	var a = document.createElement("a");
+	document.body.appendChild(a);
+    a.style = "display: none";
+    var blob = new Blob([array.slice(secondH+1,secondH+zipLength+1)], {type: "stream/octet"});
+    var url = window.URL.createObjectURL(blob);
+    a.href = url;
+    a.download = "data.zip";
+    a.click();
+    window.URL.revokeObjectURL(url);
+}
+
+function bin2Int(array) {
+	return parseInt(String.fromCharCode.apply(String, array));
 }
 
 function fileSelect() {
@@ -217,11 +273,6 @@ function mouseOutDownload(el) {
 
 function mouseInDownload(el) {
 	el.style.backgroundColor = "#F1948A";
-}
-
-function download() {
-	window.alert("hier");
-	connection.send("2#database/SENSOR1/2019/05#1#01.txt#");
 }
 
 function mouseOverPath() {
