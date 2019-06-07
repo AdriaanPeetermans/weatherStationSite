@@ -57,9 +57,20 @@ function respons(mes) {
 			number = parseInt(parts[1]);
 			folders = [];
 			for (var i = 0; i < number; i++) {
-				var type = parseInt(parts[i*3+2]);
-				var name = parts[i*3+4];
-				var size = parts[i*3+3];
+				var type = parseInt(parts[i*4+2]);
+				var name = parts[i*4+5];
+				var onDisk = parts[i*4+4];
+				var onDiskString;
+				if (onDisk == "true") {
+					onDiskString = "Ja";
+				}
+				else if (onDisk == "false") {
+					onDiskString = "Nee";
+				}
+				else {
+					onDiskString = onDisk;
+				}
+				var size = parts[i*4+3];
 				folders.push({type:type, name:name});
 				var imageName = "file";
 				if (type == 0) {
@@ -72,7 +83,7 @@ function respons(mes) {
 						"<img src = \"../../../Images/" + imageName + ".png\" height=\"30px\"></div>" +
 						"<div class=\"fileFolderName\">" + name + "</div>" +
 						"<div class=\"fileFolderSize\">" + size.replace(".",",") + "</div>" +
-						"<div class=\"onDisk\">Ja</div></div>";
+						"<div class=\"onDisk\">" + onDiskString + "</div></div>";
 			}
 			mainBlock.style.height = number*31 + "px";
 			document.getElementById("path").innerHTML = path;
@@ -126,6 +137,7 @@ function download() {
 	if (names.length == 0) {
 		return;
 	}
+	
 	message = message + names.length + "#";
 	for (var i = 0; i < names.length; i++) {
 		message = message + names[i] + "#";
