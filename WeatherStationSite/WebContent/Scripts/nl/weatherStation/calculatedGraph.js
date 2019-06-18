@@ -154,11 +154,12 @@ function buildGraph() {
 	            line: {
 	                tension: 0.2, // disables bezier curves
 	            }
-	        }
+	        },
+	        maintainAspectRatio: false
 	    }
 	});
 	adjustGraph();
-	document.getElementById("myChart").style.width = 1044;
+	document.getElementById("myChart").style.height = "440px";
 }
 
 function adjustGraph() {
