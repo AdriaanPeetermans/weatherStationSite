@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Zon</title>
+		<script src="../../../Scripts/nl/weatherStation/sunContainer.js" type="text/javascript"></script>
+		<link rel="stylesheet" type="text/css" href="../../../Style/weatherStation/sunContainer.css">
+	</head>
+	<body>
+		<noscript>Geen Javascript... :( Zet hem aub weer snel aan.</noscript>
+		<table class="mainTable">
+			<tr align = "left" style="height:35px;">
+				<td style = "font-size:23px; color:darkred; border-right-style:solid; border-right-color:darkred; border-right-width:0px; padding-right:5px;">
+					Zon
+				</td>
+				<td style = "width:5px;">
+
+				</td>
+				<td class = "activeMenu" align="center" onclick = "graphTypeClick(this)" id = "gt0">
+					<input type="button" class = "menuButton" onmouseover = "mouseEnterGraphType(this)" onmouseout = "mouseOutGraphType(this)" id = "tempMaxButton" value="Dag">
+				</td>
+				<td class = "nonActiveMenu" align="center" onclick = "graphTypeClick(this)" id = "gt1">
+					<input type="button" class = "menuButton" onmouseover = "mouseEnterGraphType(this)" onmouseout = "mouseOutGraphType(this)" id = "tempMinButton" value="Jaar">
+				</td>
+				<td class = "nonActiveMenu" align="center" onclick = "graphTypeClick(this)" id = "gt2">
+					<input type="button" class = "menuButton" onmouseover = "mouseEnterGraphType(this)" onmouseout = "mouseOutGraphType(this)" id = "sunUpButton" value="Locatie">
+				</td>
+			</tr>
+			<tr>
+				<td colspan = "8">
+					<iframe id="sunFrame" src="sunDay.html" width="100%" height="540px" id="graph" style="border:0px;">
+						Your browser does not support objects... :/
+					</iframe>
+				</td>
+			</tr>
+		</table>
+		
+	</body>
+</html>

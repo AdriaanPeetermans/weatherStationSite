@@ -1,0 +1,31 @@
+@CHARSET "UTF-8";
+
+.mainTable {
+	border-collapse: collapse;
+	font-family: arial;
+	width: 100%;
+	height: 100%;
+}
+
+.activeMenu {
+	font-size: 18px;
+	border-bottom-style: solid;
+	border-bottom-color: darkred;
+	border-bottom-width: 3px;
+}
+
+.nonActiveMenu {
+	font-size: 18px;
+	border-bottom-style: solid;
+	border-bottom-color: darkred;
+	border-bottom-width: 0px;"
+}
+
+.menuButton {
+	border: none;
+	background-color: #E0E0E0;
+	font-size: 18px;
+	margin: 0;
+	font-family: arial;
+	outline-width: 0px;"
+}
