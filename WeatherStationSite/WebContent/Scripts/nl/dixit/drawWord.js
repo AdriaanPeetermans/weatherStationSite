@@ -296,10 +296,10 @@ function getColors() {
 			    break;
 			case "word":
 				word = parts[1];
-				if (word == "nikske") {
-					connection.send("getWord");
-					return;
-				}
+//				if (word == "nikske") {
+//					connection.send("getWord");
+//					return;
+//				}
 				startTime = parseInt(parts[2]);
 				nowTime = startTime;
 				document.getElementById("wordHolder").innerHTML = word;

@@ -46,6 +46,9 @@ function getParams() {
 				nowTime = startTime;
 				window.setInterval(timer, 1000);
 			    break;
+			case "waitLonger":
+				window.open("waiting.html?port=" + serverPort + "&vip=" + vip + "&name=" + name + "&next=giveWord", "_self");
+				break;
 		}
 	};
 }

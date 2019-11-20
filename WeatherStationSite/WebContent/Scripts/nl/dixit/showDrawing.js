@@ -42,6 +42,7 @@ function getParams() {
 	};
 	
 	connection.onmessage = function (e) {
+		console.log(e.data);
 		parts = e.data.split("#");
 	    switch (parts[0]) {
 	    	case "drawing":
