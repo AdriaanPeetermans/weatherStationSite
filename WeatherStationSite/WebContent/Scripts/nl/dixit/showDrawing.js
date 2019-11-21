@@ -60,6 +60,8 @@ function getParams() {
 	    		connection.send("getWords");
 	    		break;
 	    	case "words":
+	    		console.log("Words have arived:");
+	    		console.log(parts);
 	    		var numberWords = parseInt(parts[1]);
 	    		for (var i = 0; i < numberWords; i++) {
 	    			playerContainers[i].innerHTML = parts[2+i];
@@ -67,6 +69,10 @@ function getParams() {
 	    			playerContainers[i].classList.add('playerWordContainerNoBlur');
 	    		}
 	    		break;
+	    	case "showPoints":
+    			console.log("Votes have arived:");
+    			console.log(parts);
+    			break;
 	    }
 	};
 }
@@ -204,12 +210,12 @@ var dirs = [1, 1, 1, 1, 1, 1, 1, 1, 1];
 var holderTimer;
 
 function drawWordHolders() {
-	for (var i = 0; i < numberPlayers+1; i++) {
+	for (var i = 0; i < numberPlayers; i++) {
 		var wordBlock = document.getElementById("playerWordHolder" + i);
 		wordBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
 		wordBlock.innerHTML = "<div class=\"playerWordContainer\" id=\"playerWordContainer" + i + "\"></div>";
 		var container = document.getElementById("playerWordContainer" + i);
-		var phase = 25*i/(numberPlayers+1);
+		var phase = 25*i/(numberPlayers);
 		var str = "";
 		for (var j = 0; j < phase; j++) {
 			str = str + "x";
