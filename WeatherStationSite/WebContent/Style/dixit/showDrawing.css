@@ -152,6 +152,20 @@ html, body {
 	color: #2C3E50;
 }
 
+.playerWordContainerWrong {
+	font-family: arial;
+	font-size: 30px;
+	color: #78281F;
+/* 	background-color: #EC7063; */
+}
+
+.playerWordContainerCorrect {
+	font-family: arial;
+	font-size: 30px;
+	color: #145A32;
+/* 	background-color: #7DCEA0; */
+}
+
 #playerWordHolder0 {
 	top: 20%;
 	left: 2%;
@@ -195,4 +209,40 @@ html, body {
 #playerWordHolder7 {
 	top: 65%;
 	right: 2%;
+}
+
+#drawerHolder {
+	width: 400px;
+	height: 100px;
+	position: absolute;
+	transform: translate(0, -50%);
+	z-index: 2;
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	border-radius: 6px;
+  	bottom: 0%;
+  	left: 2%;
+}
+
+#playerHolder {
+	width: 400px;
+	height: 100px;
+	position: absolute;
+	transform: translate(0, -50%);
+	z-index: 2;
+	display: flex;
+  	align-items: center;
+  	justify-content: center;
+  	border-radius: 6px;
+  	bottom: 0%;
+  	right: 2%;
+}
+
+#playerCan {
+	border-radius: 6px;
+}
+
+#drawerCan {
+	border-radius: 6px;
 }

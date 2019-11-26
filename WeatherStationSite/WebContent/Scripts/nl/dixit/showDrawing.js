@@ -22,6 +22,14 @@ var drawingNumber;
 var connection;
 var numberPlayers;
 
+//Parameters for the score:
+var wrongTime = 3;				//Number of seconds that wrong word should be highlighted
+
+var wrongWordsPlayers = [];
+var previousScores = [];
+var currentDrawer;
+var correctWord;
+
 function getParams() {
 	var queryString = decodeURIComponent(window.location.search);
 	queryString = queryString.substring(1);
@@ -47,6 +55,7 @@ function getParams() {
 	    switch (parts[0]) {
 	    	case "drawing":
 	    		numberPlayers = parseInt(parts[1]);
+	    		console.log(numberPlayers);
 	    		startTime = parseInt(parts[2]);
 	    		nowTime = startTime;
 	    		var drawing = unPackDrawing(parts[3]);
@@ -72,9 +81,105 @@ function getParams() {
 	    	case "showPoints":
     			console.log("Votes have arived:");
     			console.log(parts);
+    			correctWord = parts[1];
+    			currentDrawer = {name: parts[2], color0: parts[3], color1: parts[4], number: parseInt(parts[5])};
+    			var numberWrongWords = parseInt(parts[6]);
+    			var index = 7;
+    			for (var i = 0; i < numberWrongWords; i++) {
+    				var wrongW = parts[index];
+    				var thisPlayer = {name: parts[index+1], color0: parts[index+2], color1: parts[index+3], number: parseInt(parts[index+4])};
+    				index = index + 4;
+    				var players = [];
+    				var numberPlayerss = parseInt(parts[index+1]);
+    				index = index + 2;
+    				for (var j = 0; j < numberPlayerss; j++) {
+    					var player = {name: parts[index], color0: parts[index+1], color1: parts[index+2], number: parseInt(parts[index+3])};
+    					players.push(player);
+    					index = index + 4;
+    				}
+    				wrongWordsPlayers.push({word: wrongW, thisPlayer: thisPlayer, players: players});
+    			}
+    			var numberPlayerss = parseInt(parts[index]);
+    			index = index + 1;
+    			for (var i = 0; i < numberPlayerss; i++) {
+    				previousScores.push(parseInt(parts[index]));
+    				index = index + 1;
+    			}
+    			var drawerBlock = document.getElementById('drawerHolder');
+    			drawerBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
+    			var playerBlock = document.getElementById('playerHolder');
+    			playerBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
+    			setTimeout(showWrong, wrongTime*1000);
     			break;
 	    }
 	};
+}
+
+var wrongWordIndex = 0;
+
+function showWrong() {
+	console.log(wrongWordsPlayers, wrongWordIndex);
+	if (wrongWordIndex >= wrongWordsPlayers.length) {
+		showCorrect();
+	}
+	else {
+		var word = wrongWordsPlayers[wrongWordIndex].word;
+		var thisPlayer = wrongWordsPlayers[wrongWordIndex].thisPlayer;
+		var index;
+		for (var i = 0; i < playerContainers.length; i++) {
+			console.log(playerContainers[i].innerHTML);
+			if (playerContainers[i].innerHTML == word) {
+				index = i;
+				break;
+			}
+		}
+		console.log(index);
+		playerContainers[index].classList.remove('playerWordContainerNoBlur');
+		playerContainers[index].classList.add('playerWordContainerWrong');
+		var wordBlock = document.getElementById("playerWordHolder" + index);
+		wordBlock.style.backgroundColor = "#EC7063";
+		var drawerCan = document.getElementById('drawerCan');
+		drawerCan.style.backgroundColor = "#" + thisPlayer.color1;
+		var drawerCtx = drawerCan.getContext('2d');
+		
+		drawerCtx.fillStyle = "#" + thisPlayer.color0;
+		drawerCtx.beginPath();
+		drawerCtx.strokeStyle = "#" + thisPlayer.color0;
+		drawerCtx.lineWidth = 50;
+		drawerCtx.lineCap = "round";
+		drawerCtx.moveTo(100, 50);
+		drawerCtx.lineTo(300, 50);
+		//drawerCtx.shadowColor = 'rgba(0, 0, 0, 0.2)';
+		//drawerCtx.shadowBlur = 8;
+		//drawerCtx.shadowOffsetX = 0;
+		//drawerCtx.shadowOffsetY = 4;
+		drawerCtx.stroke();
+		
+		//Draw player name:
+		drawerCtx.font = "30px Arial";
+		drawerCtx.fillStyle = "#2C3E50";
+		drawerCtx.textBaseline = "middle";
+		var textX = Math.round(200 - drawerCtx.measureText(thisPlayer.name).width/2);
+		drawerCtx.fillText(thisPlayer.name, textX, 50);
+		
+		wrongWordIndex ++;
+		setTimeout(showWrong, wrongTime*1000);
+	}
+}
+
+function showCorrect() {
+	console.log(correctWord);
+	var index;
+	for (var i = 0; i < playerContainers.length; i++) {
+		if (playerContainers[i].innerHTML == correctWord) {
+			index = i;
+			break;
+		}
+	}
+	playerContainers[index].classList.remove('playerWordContainerNoBlur');
+	playerContainers[index].classList.add('playerWordContainerCorrect');
+	var wordBlock = document.getElementById("playerWordHolder" + index);
+	wordBlock.style.backgroundColor = "#7DCEA0";
 }
 
 function unPackDrawing(drawingStr) {
@@ -210,6 +315,7 @@ var dirs = [1, 1, 1, 1, 1, 1, 1, 1, 1];
 var holderTimer;
 
 function drawWordHolders() {
+	console.log(numberPlayers);
 	for (var i = 0; i < numberPlayers; i++) {
 		var wordBlock = document.getElementById("playerWordHolder" + i);
 		wordBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
