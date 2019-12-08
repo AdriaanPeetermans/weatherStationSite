@@ -22,6 +22,11 @@ var drawingNumber;
 var connection;
 var numberPlayers;
 
+//Score increments:
+var correctVoteDrawerPoints;
+var correctVotedPoints;
+var misleadPoints;
+
 //Parameters for the score:
 var wrongTime = 3;				//Number of seconds that wrong word should be highlighted
 
@@ -29,6 +34,7 @@ var wrongWordsPlayers = [];
 var previousScores = [];
 var currentDrawer;
 var correctWord;
+var correctPlayers = [];
 
 function getParams() {
 	var queryString = decodeURIComponent(window.location.search);
@@ -83,8 +89,12 @@ function getParams() {
     			console.log(parts);
     			correctWord = parts[1];
     			currentDrawer = {name: parts[2], color0: parts[3], color1: parts[4], number: parseInt(parts[5])};
-    			var numberWrongWords = parseInt(parts[6]);
-    			var index = 7;
+    			var numberCorrectPlayers = parseInt(parts[6]);
+    			for (var i = 0; i < numberCorrectPlayers; i++) {
+    				correctPlayers.push({name: parts[7+i*4], color0: parts[8+i*4], color1: parts[9+i*4], number: parseInt(parts[10+i*4])});
+    			}
+    			var numberWrongWords = parseInt(parts[7+numberCorrectPlayers*4]);
+    			var index = 8+numberCorrectPlayers*4;
     			for (var i = 0; i < numberWrongWords; i++) {
     				var wrongW = parts[index];
     				var thisPlayer = {name: parts[index+1], color0: parts[index+2], color1: parts[index+3], number: parseInt(parts[index+4])};
@@ -105,6 +115,9 @@ function getParams() {
     				previousScores.push(parseInt(parts[index]));
     				index = index + 1;
     			}
+    			correctVoteDrawerPoints = parseInt(parts[index]);
+    			correctVotedPoints = parseInt(parts[index+1]);
+    			misleadPoints = parseInt(parts[index+2]);
     			var drawerBlock = document.getElementById('drawerHolder');
     			drawerBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
     			var playerBlock = document.getElementById('playerHolder');
@@ -116,6 +129,16 @@ function getParams() {
 }
 
 var wrongWordIndex = 0;
+
+var timePerMisleadPlayer = 1000;
+var timePerWrongWord = 5000;
+var switchTimeMislead = 500;
+var misleadFPS = 60;
+var misleadCnt = 0;
+var misleadIndex = 0;
+var misleadedPlayers;
+
+var correctIndex = 0;
 
 function showWrong() {
 	console.log(wrongWordsPlayers, wrongWordIndex);
@@ -138,10 +161,12 @@ function showWrong() {
 		playerContainers[index].classList.add('playerWordContainerWrong');
 		var wordBlock = document.getElementById("playerWordHolder" + index);
 		wordBlock.style.backgroundColor = "#EC7063";
+		
 		var drawerCan = document.getElementById('drawerCan');
 		drawerCan.style.backgroundColor = "#" + thisPlayer.color1;
 		var drawerCtx = drawerCan.getContext('2d');
 		
+		// Draw mislead player:
 		drawerCtx.fillStyle = "#" + thisPlayer.color0;
 		drawerCtx.beginPath();
 		drawerCtx.strokeStyle = "#" + thisPlayer.color0;
@@ -162,9 +187,113 @@ function showWrong() {
 		var textX = Math.round(200 - drawerCtx.measureText(thisPlayer.name).width/2);
 		drawerCtx.fillText(thisPlayer.name, textX, 50);
 		
-		wrongWordIndex ++;
-		setTimeout(showWrong, wrongTime*1000);
+		// Draw misleaded players:
+		misleadIndex = 0;
+		misleadedPlayers = wrongWordsPlayers[wrongWordIndex].players;
+		showMisleadedPlayers();
 	}
+}
+
+function showMisleadedPlayers() {
+	var playerCan = document.getElementById('playerCan');
+	var playerCtx = playerCan.getContext('2d');
+	var misleadedPlayer = misleadedPlayers[misleadIndex];
+	if (misleadedPlayers.length == 1) {
+		// Background:
+		playerCtx.fillStyle = "#" + misleadedPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, 100);
+		drawPlayerName(playerCtx, "#" + misleadedPlayer.color0, 50, misleadedPlayer.name);
+		wrongWordIndex ++;
+		setTimeout(showWrong, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/misleadedPlayers.length)));
+	}
+	else {
+		if (misleadIndex == misleadedPlayers.length-1) {
+			// Background:
+			playerCtx.fillStyle = "#" + misleadedPlayer.color1;
+			playerCtx.fillRect(0, 30, 400, 70);
+			playerCtx.fillStyle = "#" + misleadedPlayers[misleadIndex-1].color1;
+			playerCtx.fillRect(0, 0, 400, 30);
+			// First player:
+			drawPlayerName(playerCtx, "#" + misleadedPlayers[misleadIndex-1].color0, -5, misleadedPlayers[misleadIndex-1].name);
+			// Second player:
+			drawPlayerName(playerCtx, "#" + misleadedPlayer.color0, 65, misleadedPlayer.name);
+			wrongWordIndex ++;
+			setTimeout(showWrong, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/misleadedPlayers.length)));
+		}
+		else {
+			// Background:
+			playerCtx.fillStyle = "#" + misleadedPlayer.color1;
+			playerCtx.fillRect(0, 0, 400, 70);
+			playerCtx.fillStyle = "#" + misleadedPlayers[misleadIndex+1].color1;
+			playerCtx.fillRect(0, 70, 400, 30);
+			// First player:
+			drawPlayerName(playerCtx, "#" + misleadedPlayer.color0, 35, misleadedPlayer.name);
+			// Second player:
+			drawPlayerName(playerCtx, "#" + misleadedPlayers[misleadIndex+1].color0, 105, misleadedPlayers[misleadIndex+1].name);
+			setTimeout(switchMislead, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/misleadedPlayers.length)));
+		}
+	}
+}
+
+function drawPlayerName(ctx, col, y, name) {
+	// Container:
+	ctx.fillStyle = col;
+	ctx.beginPath();
+	ctx.strokeStyle = col;
+	ctx.lineWidth = 50;
+	ctx.lineCap = "round";
+	ctx.moveTo(100, y);
+	ctx.lineTo(300, y);
+	ctx.stroke();
+	// Name:
+	ctx.font = "30px Arial";
+	ctx.fillStyle = "#2C3E50";
+	ctx.textBaseline = "middle";
+	var textX = Math.round(200 - ctx.measureText(name).width/2);
+	ctx.fillText(name, textX, y);
+}
+
+function switchMislead() {
+	var maxCnt = Math.ceil(misleadFPS*switchTimeMislead/1000.0);
+	var playerCan = document.getElementById('playerCan');
+	var playerCtx = playerCan.getContext('2d');
+	var misleadedPlayer = misleadedPlayers[misleadIndex];
+	if (misleadCnt >= maxCnt) {
+		misleadCnt = 0;
+		misleadIndex ++;
+		showMisleadedPlayers();
+		return;
+	}
+	else {
+		misleadCnt ++;
+	}
+	if (misleadIndex == misleadedPlayers.length-2) {
+		// Second to last (should shift 40 pixels):
+		var pix = Math.round(misleadCnt*1.0/maxCnt*40);
+		var border = 70-pix;
+		playerCtx.fillStyle = "#" + misleadedPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, border);
+		playerCtx.fillStyle = "#" + misleadedPlayers[misleadIndex+1].color1;
+		playerCtx.fillRect(0, border, 400, 100-border);
+		drawPlayerName(playerCtx, "#" + misleadedPlayer.color0, 35-pix, misleadedPlayer.name);
+		drawPlayerName(playerCtx, "#" + misleadedPlayers[misleadIndex+1].color0, 105-pix, misleadedPlayers[misleadIndex+1].name);
+	}
+	else {
+		// Normal (should shift 70 pixels):
+		var pix = Math.round(misleadCnt*1.0/maxCnt*70);
+		var border1 = 70-pix;
+		var border2 = 140-pix;
+		playerCtx.fillStyle = "#" + misleadedPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, border1);
+		playerCtx.fillStyle = "#" + misleadedPlayers[misleadIndex+1].color1;
+		playerCtx.fillRect(0, border1, 400, 70);
+		playerCtx.fillStyle = "#" + misleadedPlayers[misleadIndex+2].color1;
+		playerCtx.fillRect(0, border2, 400, 70);
+		drawPlayerName(playerCtx, "#" + misleadedPlayer.color0, 35-pix, misleadedPlayer.name);
+		drawPlayerName(playerCtx, "#" + misleadedPlayers[misleadIndex+1].color0, border1+35, misleadedPlayers[misleadIndex+1].name);
+		drawPlayerName(playerCtx, "#" + misleadedPlayers[misleadIndex+2].color0, border2+35, misleadedPlayers[misleadIndex+2].name);
+	}
+	setTimeout(switchMislead, Math.round(1000.0/misleadFPS));
 }
 
 function showCorrect() {
@@ -180,6 +309,102 @@ function showCorrect() {
 	playerContainers[index].classList.add('playerWordContainerCorrect');
 	var wordBlock = document.getElementById("playerWordHolder" + index);
 	wordBlock.style.backgroundColor = "#7DCEA0";
+	
+	var drawerCan = document.getElementById('drawerCan');
+	drawerCan.style.backgroundColor = "#" + currentDrawer.color1;
+	var drawerCtx = drawerCan.getContext('2d');
+	
+	drawPlayerName(drawerCtx, "#" + currentDrawer.color0, 50, currentDrawer.name);
+	
+	// Draw correct players:
+	correctIndex = 0;
+	showCorrectPlayers();
+}
+
+function showCorrectPlayers() {
+	var playerCan = document.getElementById('playerCan');
+	var playerCtx = playerCan.getContext('2d');
+	var correctPlayer = correctPlayers[correctIndex];
+	if (correctPlayers.length == 1) {
+		// Background:
+		playerCtx.fillStyle = "#" + correctPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, 100);
+		drawPlayerName(playerCtx, "#" + correctPlayer.color0, 50, correctPlayer.name);
+		setTimeout(toScorePage, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/correctPlayers.length)));
+	}
+	else {
+		if (correctIndex == correctPlayers.length-1) {
+			// Background:
+			playerCtx.fillStyle = "#" + correctPlayer.color1;
+			playerCtx.fillRect(0, 30, 400, 70);
+			playerCtx.fillStyle = "#" + correctPlayers[correctIndex-1].color1;
+			playerCtx.fillRect(0, 0, 400, 30);
+			// First player:
+			drawPlayerName(playerCtx, "#" + correctPlayers[correctIndex-1].color0, -5, correctPlayers[correctIndex-1].name);
+			// Second player:
+			drawPlayerName(playerCtx, "#" + correctPlayer.color0, 65, correctPlayer.name);
+			setTimeout(toScorePage, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/correctPlayers.length)));
+		}
+		else {
+			// Background:
+			playerCtx.fillStyle = "#" + correctPlayer.color1;
+			playerCtx.fillRect(0, 0, 400, 70);
+			playerCtx.fillStyle = "#" + correctPlayers[correctIndex+1].color1;
+			playerCtx.fillRect(0, 70, 400, 30);
+			// First player:
+			drawPlayerName(playerCtx, "#" + correctPlayer.color0, 35, correctPlayer.name);
+			// Second player:
+			drawPlayerName(playerCtx, "#" + correctPlayers[correctIndex+1].color0, 105, correctPlayers[correctIndex+1].name);
+			setTimeout(switchCorrect, Math.max(timePerMisleadPlayer, Math.round(timePerWrongWord*1.0/correctPlayers.length)));
+		}
+	}
+}
+
+function switchCorrect() {
+	var maxCnt = Math.ceil(misleadFPS*switchTimeMislead/1000.0);
+	var playerCan = document.getElementById('playerCan');
+	var playerCtx = playerCan.getContext('2d');
+	var correctPlayer = correctPlayers[correctIndex];
+	if (misleadCnt >= maxCnt) {
+		misleadCnt = 0;
+		correctIndex ++;
+		showCorrectPlayers();
+		return;
+	}
+	else {
+		misleadCnt ++;
+	}
+	if (correctIndex == correctPlayers.length-2) {
+		// Second to last (should shift 40 pixels):
+		var pix = Math.round(misleadCnt*1.0/maxCnt*40);
+		var border = 70-pix;
+		playerCtx.fillStyle = "#" + correctPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, border);
+		playerCtx.fillStyle = "#" + correctPlayers[correctIndex+1].color1;
+		playerCtx.fillRect(0, border, 400, 100-border);
+		drawPlayerName(playerCtx, "#" + correctPlayer.color0, 35-pix, correctPlayer.name);
+		drawPlayerName(playerCtx, "#" + correctPlayers[correctIndex+1].color0, 105-pix, correctPlayers[correctIndex+1].name);
+	}
+	else {
+		// Normal (should shift 70 pixels):
+		var pix = Math.round(misleadCnt*1.0/maxCnt*70);
+		var border1 = 70-pix;
+		var border2 = 140-pix;
+		playerCtx.fillStyle = "#" + correctPlayer.color1;
+		playerCtx.fillRect(0, 0, 400, border1);
+		playerCtx.fillStyle = "#" + correctPlayers[correctIndex+1].color1;
+		playerCtx.fillRect(0, border1, 400, 70);
+		playerCtx.fillStyle = "#" + correctPlayers[correctIndex+2].color1;
+		playerCtx.fillRect(0, border2, 400, 70);
+		drawPlayerName(playerCtx, "#" + correctPlayer.color0, 35-pix, correctPlayer.name);
+		drawPlayerName(playerCtx, "#" + correctPlayers[correctIndex+1].color0, border1+35, correctPlayers[correctIndex+1].name);
+		drawPlayerName(playerCtx, "#" + correctPlayers[correctIndex+2].color0, border2+35, correctPlayers[correctIndex+2].name);
+	}
+	setTimeout(switchCorrect, Math.round(1000.0/misleadFPS));
+}
+
+function toScorePage() {
+	console.log("To score page");
 }
 
 function unPackDrawing(drawingStr) {
