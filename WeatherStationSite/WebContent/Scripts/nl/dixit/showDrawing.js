@@ -32,6 +32,7 @@ var wrongTime = 3;				//Number of seconds that wrong word should be highlighted
 
 var wrongWordsPlayers = [];
 var previousScores = [];
+var currentScores = [];
 var currentDrawer;
 var correctWord;
 var correctPlayers = [];
@@ -118,6 +119,19 @@ function getParams() {
     			correctVoteDrawerPoints = parseInt(parts[index]);
     			correctVotedPoints = parseInt(parts[index+1]);
     			misleadPoints = parseInt(parts[index+2]);
+    			
+    			//Determine current scores:
+    			for (var i = 0; i < numberPlayerss; i++) {
+    				currentScores.push(previousScores[i]);
+    			}
+    			currentScores[currentDrawer.number] = currentScores[currentDrawer.number] + numberCorrectPlayers*correctVoteDrawerPoints;
+    			for (var i = 0; i < numberWrongWords; i++) {
+    				currentScores[wrongWordsPlayers[i].thisPlayer.number] = currentScores[wrongWordsPlayers[i].thisPlayer.number] + wrongWordsPlayers[i].players.length*misleadPoints;
+    			}
+    			for (var i = 0; i < numberCorrectPlayers; i++) {
+    				currentScores[correctPlayers[i].number] = currentScores[correctPlayers[i].number] + correctVotedPoints;
+    			}
+    			
     			var drawerBlock = document.getElementById('drawerHolder');
     			drawerBlock.style.boxShadow = "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
     			var playerBlock = document.getElementById('playerHolder');
@@ -404,7 +418,11 @@ function switchCorrect() {
 }
 
 function toScorePage() {
-	console.log("To score page");
+	var nextPage = "scorePage.html?port=" + serverPort + "&numberPlayers=" + previousScores.length;
+	for (var i = 0; i < previousScores.length; i++) {
+		nextPage = nextPage + "&" + previousScores[i] + "=" + currentScores[i];
+	}
+	window.open(nextPage, "_self");
 }
 
 function unPackDrawing(drawingStr) {
